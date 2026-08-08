@@ -1,0 +1,31 @@
+﻿[
+  {
+    "Id": 1,
+    "Title": "کتاب ۱",
+    "Image": "https://picsum.photos/200/300?1",
+    "OldPrice": "450",
+    "Price": "340"
+
+  },
+  {
+    "Id": 2,
+    "Title": "کتاب ۲",
+    "Image": "https://picsum.photos/200/300?2",
+    "OldPrice": "600",
+    "Price": "450"
+  },
+  {
+    "Id": 3,
+    "Title": "کتاب ۳",
+    "Image": "https://picsum.photos/200/300?3",
+    "OldPrice": "750",
+    "Price": "600"
+  },
+  {
+    "Id": 4,
+    "Title": "کتاب ۴",
+    "Image": "https://picsum.photos/200/300?4",
+    "OldPrice": "260",
+    "Price": "220"
+  }
+]

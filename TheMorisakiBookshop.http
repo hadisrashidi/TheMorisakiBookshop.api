@@ -1,0 +1,6 @@
+@TheMorisakiBookshop_HostAddress = http://localhost:5074
+
+GET {{TheMorisakiBookshop_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
