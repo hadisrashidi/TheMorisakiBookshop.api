@@ -51,5 +51,52 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             return Ok(book);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRelatedBooks(int id)
+        {
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Books.json");
+            var json = System.IO.File.ReadAllText(path);
+
+            var books = JsonSerializer.Deserialize<List<Books>>(json) ?? new List<Books>();
+
+            var related = books.Where(b => b.Id != id).Take(3);
+
+            return Ok(related);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSimilarBooks(int id)
+        {
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Books.json");
+            var json = System.IO.File.ReadAllText(path);
+
+            var books = JsonSerializer.Deserialize<List<Books>>(json) ?? new List<Books>();
+
+            var similar = books.Where(b => b.Id != id).Reverse().Take(3);
+
+            return Ok(similar);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchBooks(string? q)
+        {
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Books.json");
+            var json = System.IO.File.ReadAllText(path);
+
+            var books = JsonSerializer.Deserialize<List<Books>>(json) ?? new List<Books>();
+
+            if (string.IsNullOrWhiteSpace(q))
+            {
+                return Ok(books);
+            }
+
+            var results = books.Where(b => b.Title.Contains(q, StringComparison.OrdinalIgnoreCase));
+
+            return Ok(results);
+        }
     }
 }

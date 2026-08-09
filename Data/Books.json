@@ -1,31 +1,82 @@
-﻿[
+[
   {
     "Id": 1,
     "Title": "کتاب ۱",
     "Image": "https://picsum.photos/200/300?1",
     "OldPrice": "450",
-    "Price": "340"
-
+    "Price": "340",
+    "Specs": [
+      { "Label": "تعداد صفحات", "Value": "689" },
+      { "Label": "تعداد جلد", "Value": "1" },
+      { "Label": "زبان کتاب", "Value": "انگلیسی" },
+      { "Label": "شابک / ISBN", "Value": "9781292241580" },
+      { "Label": "قطع", "Value": "رقعی" },
+      { "Label": "ناشر", "Value": "Forever" },
+      { "Label": "نوع جلد", "Value": "نرم" },
+      { "Label": "نوع چاپ", "Value": "سیاه و سفید" },
+      { "Label": "نوع کاغذ", "Value": "بالک" },
+      { "Label": "نویسنده / نویسندگان", "Value": "Callie Hart" },
+      { "Label": "ژانر", "Value": "عاشقانه فانتزی" }
+    ]
   },
   {
     "Id": 2,
     "Title": "کتاب ۲",
     "Image": "https://picsum.photos/200/300?2",
     "OldPrice": "600",
-    "Price": "450"
+    "Price": "450",
+    "Specs": [
+      { "Label": "تعداد صفحات", "Value": "412" },
+      { "Label": "تعداد جلد", "Value": "1" },
+      { "Label": "زبان کتاب", "Value": "فارسی" },
+      { "Label": "شابک / ISBN", "Value": "9786001194823" },
+      { "Label": "قطع", "Value": "رقعی" },
+      { "Label": "ناشر", "Value": "نشر چشمه" },
+      { "Label": "نوع جلد", "Value": "شومیز" },
+      { "Label": "نوع چاپ", "Value": "سیاه و سفید" },
+      { "Label": "نوع کاغذ", "Value": "بالک" },
+      { "Label": "نویسنده / نویسندگان", "Value": "ساتوشی یاگیساوا" },
+      { "Label": "ژانر", "Value": "رمان" }
+    ]
   },
   {
     "Id": 3,
     "Title": "کتاب ۳",
     "Image": "https://picsum.photos/200/300?3",
     "OldPrice": "750",
-    "Price": "600"
+    "Price": "600",
+    "Specs": [
+      { "Label": "تعداد صفحات", "Value": "324" },
+      { "Label": "تعداد جلد", "Value": "1" },
+      { "Label": "زبان کتاب", "Value": "فارسی" },
+      { "Label": "شابک / ISBN", "Value": "9786003762148" },
+      { "Label": "قطع", "Value": "پالتویی" },
+      { "Label": "ناشر", "Value": "نشر ماهی" },
+      { "Label": "نوع جلد", "Value": "شومیز" },
+      { "Label": "نوع چاپ", "Value": "سیاه و سفید" },
+      { "Label": "نوع کاغذ", "Value": "تحریر" },
+      { "Label": "نویسنده / نویسندگان", "Value": "هاروکی موراکامی" },
+      { "Label": "ژانر", "Value": "ادبیات داستانی" }
+    ]
   },
   {
     "Id": 4,
     "Title": "کتاب ۴",
     "Image": "https://picsum.photos/200/300?4",
     "OldPrice": "260",
-    "Price": "220"
+    "Price": "220",
+    "Specs": [
+      { "Label": "تعداد صفحات", "Value": "256" },
+      { "Label": "تعداد جلد", "Value": "1" },
+      { "Label": "زبان کتاب", "Value": "فارسی" },
+      { "Label": "شابک / ISBN", "Value": "9786220102345" },
+      { "Label": "قطع", "Value": "وزیری" },
+      { "Label": "ناشر", "Value": "نشر نو" },
+      { "Label": "نوع جلد", "Value": "گالینگور" },
+      { "Label": "نوع چاپ", "Value": "سیاه و سفید" },
+      { "Label": "نوع کاغذ", "Value": "بالک" },
+      { "Label": "نویسنده / نویسندگان", "Value": "فریبا وفی" },
+      { "Label": "ژانر", "Value": "داستان کوتاه" }
+    ]
   }
 ]
