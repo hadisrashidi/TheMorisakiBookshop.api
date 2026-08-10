@@ -11,9 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
+    <!-- Repositories read these at runtime from the content root, so they
+         need to land next to the built/published app, not just live in
+         source control. -->
+    <None Include="Data\**\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

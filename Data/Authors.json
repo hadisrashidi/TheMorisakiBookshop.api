@@ -1,18 +1,14 @@
-﻿[
-  {
-    "Name": "نویسنده ۱",
-    "Image": "https://picsum.photos/200/300?1"
-  },
-  {
-    "Name": "نویسنده ۲",
-    "Image": "https://picsum.photos/200/300?2"
-  },
-  {
-    "Name": "نویسنده ۳",
-    "Image": "https://picsum.photos/200/300?3"
-  },
-  {
-    "Name": "نویسنده ۴",
-    "Image": "https://picsum.photos/200/300?4"
-  }
+[
+  { "Id": 1, "Name": "Haruki Murakami", "Image": "https://picsum.photos/seed/author-murakami/200/200" },
+  { "Id": 2, "Name": "Khaled Hosseini", "Image": "https://picsum.photos/seed/author-hosseini/200/200" },
+  { "Id": 3, "Name": "Elif Shafak", "Image": "https://picsum.photos/seed/author-shafak/200/200" },
+  { "Id": 4, "Name": "صادق هدایت", "Image": "https://picsum.photos/seed/author-hedayat/200/200" },
+  { "Id": 5, "Name": "Fyodor Dostoevsky", "Image": "https://picsum.photos/seed/author-dostoevsky/200/200" },
+  { "Id": 6, "Name": "Kazuo Ishiguro", "Image": "https://picsum.photos/seed/author-ishiguro/200/200" },
+  { "Id": 7, "Name": "Satoshi Yagisawa", "Image": "https://picsum.photos/seed/author-yagisawa/200/200" },
+  { "Id": 8, "Name": "فریبا وفی", "Image": "https://picsum.photos/seed/author-vafi/200/200" },
+  { "Id": 9, "Name": "Agatha Christie", "Image": "https://picsum.photos/seed/author-christie/200/200" },
+  { "Id": 10, "Name": "Franz Kafka", "Image": "https://picsum.photos/seed/author-kafka/200/200" },
+  { "Id": 11, "Name": "Albert Camus", "Image": "https://picsum.photos/seed/author-camus/200/200" },
+  { "Id": 12, "Name": "Orhan Pamuk", "Image": "https://picsum.photos/seed/author-pamuk/200/200" }
 ]

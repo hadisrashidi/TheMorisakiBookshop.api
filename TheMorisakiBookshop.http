@@ -1,6 +1,41 @@
 @TheMorisakiBookshop_HostAddress = http://localhost:5074
 
-GET {{TheMorisakiBookshop_HostAddress}}/weatherforecast/
+GET {{TheMorisakiBookshop_HostAddress}}/api/Books/GetAllBooks
 Accept: application/json
+
+###
+
+GET {{TheMorisakiBookshop_HostAddress}}/api/Books/GetNewBooks
+Accept: application/json
+
+###
+
+GET {{TheMorisakiBookshop_HostAddress}}/api/Books/GetBookById?id=1
+Accept: application/json
+
+###
+
+GET {{TheMorisakiBookshop_HostAddress}}/api/Books/SearchBooks?q=رمان
+Accept: application/json
+
+###
+
+GET {{TheMorisakiBookshop_HostAddress}}/api/Authors/GetAllAuthors
+Accept: application/json
+
+###
+
+POST {{TheMorisakiBookshop_HostAddress}}/api/BooksManagement/CreateBook
+Content-Type: application/json
+
+{
+  "title": "کتاب تازه",
+  "image": "https://picsum.photos/200/300?99",
+  "price": "250000",
+  "oldPrice": "",
+  "authorId": 1,
+  "genre": "رمان",
+  "specs": []
+}
 
 ###
