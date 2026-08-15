@@ -75,22 +75,10 @@ namespace TheMorisakiBookshop.Repositories
             return books.OrderByDescending(b => b.AddedAt).Take(count).ToList();
         }
 
+        // "محصولات مرتبط" (sidebar, book detail) — same author first; an
+        // author with only one title falls back to other authors so the
+        // section is never empty without reason.
         public async Task<List<Books>> GetRelatedAsync(int id, int count)
-        {
-            var books = await GetCacheAsync();
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
-            {
-                return new List<Books>();
-            }
-
-            return books
-                .Where(b => b.Id != id && b.Genre == book.Genre && !string.IsNullOrEmpty(book.Genre))
-                .Take(count)
-                .ToList();
-        }
-
-        public async Task<List<Books>> GetSimilarAsync(int id, int count)
         {
             var books = await GetCacheAsync();
             var book = books.FirstOrDefault(b => b.Id == id);
@@ -105,12 +93,40 @@ namespace TheMorisakiBookshop.Repositories
                 return byAuthor;
             }
 
-            // Small catalogs won't always have more than one book per author —
-            // fall back to genre so the section is never empty without reason.
             return books
-                .Where(b => b.Id != id && b.Genre == book.Genre && !string.IsNullOrEmpty(book.Genre))
+                .Where(b => b.Id != id && b.AuthorId != book.AuthorId)
                 .Take(count)
                 .ToList();
+        }
+
+        // "بر اساس سلیقه شما" (recommendations) — always other authors,
+        // preferring a shared genre for relevance.
+        public async Task<List<Books>> GetSimilarAsync(int id, int count)
+        {
+            var books = await GetCacheAsync();
+            var book = books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return new List<Books>();
+            }
+
+            var otherAuthors = books.Where(b => b.Id != id && b.AuthorId != book.AuthorId).ToList();
+
+            var sameGenre = otherAuthors
+                .Where(b => b.Genre == book.Genre && !string.IsNullOrEmpty(book.Genre))
+                .Take(count)
+                .ToList();
+
+            if (sameGenre.Count >= count)
+            {
+                return sameGenre;
+            }
+
+            var remaining = count - sameGenre.Count;
+            var alreadyPicked = sameGenre.Select(b => b.Id).ToHashSet();
+            var fillers = otherAuthors.Where(b => !alreadyPicked.Contains(b.Id)).Take(remaining);
+
+            return sameGenre.Concat(fillers).ToList();
         }
 
         public async Task<List<Books>> GetByAuthorAsync(int authorId)
@@ -119,19 +135,46 @@ namespace TheMorisakiBookshop.Repositories
             return books.Where(b => b.AuthorId == authorId).ToList();
         }
 
-        public async Task<List<Books>> SearchAsync(string? query)
+        public async Task<List<Books>> SearchAsync(string? query, string[]? genres = null, string[]? languages = null, string? sort = null)
         {
             var books = await GetCacheAsync();
-            if (string.IsNullOrWhiteSpace(query))
+            IEnumerable<Books> results = books;
+
+            if (!string.IsNullOrWhiteSpace(query))
             {
-                return books;
+                results = results.Where(b =>
+                    b.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    b.Genre.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    b.Specs.Any(s => s.Value.Contains(query, StringComparison.OrdinalIgnoreCase))
+                );
             }
 
-            return books.Where(b =>
-                b.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                b.Genre.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                b.Specs.Any(s => s.Value.Contains(query, StringComparison.OrdinalIgnoreCase))
-            ).ToList();
+            if (genres is { Length: > 0 })
+            {
+                results = results.Where(b => genres.Contains(b.Genre));
+            }
+
+            if (languages is { Length: > 0 })
+            {
+                results = results.Where(b => languages.Contains(b.Language));
+            }
+
+            results = sort switch
+            {
+                "price_asc" => results.OrderBy(b => ParsePrice(b.Price)),
+                "newest" => results.OrderByDescending(b => b.AddedAt),
+                _ => results
+            };
+
+            return results.ToList();
+        }
+
+        // Prices are stored as pre-formatted strings (e.g. "185,000") for
+        // display — strip separators to sort numerically.
+        private static decimal ParsePrice(string price)
+        {
+            var digitsOnly = new string(price.Where(char.IsDigit).ToArray());
+            return digitsOnly.Length == 0 ? 0 : decimal.Parse(digitsOnly);
         }
 
         public async Task<Books> CreateAsync(Books book)
@@ -170,6 +213,7 @@ namespace TheMorisakiBookshop.Repositories
                 existing.OldPrice = book.OldPrice;
                 existing.AuthorId = book.AuthorId;
                 existing.Genre = book.Genre;
+                existing.Language = book.Language;
                 existing.Specs = book.Specs;
 
                 await SaveAsync(_cache);

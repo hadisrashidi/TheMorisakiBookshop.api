@@ -14,6 +14,7 @@ namespace TheMorisakiBookshop
 
             builder.Services.AddSingleton<IBooksRepository, JsonBooksRepository>();
             builder.Services.AddSingleton<IAuthorsRepository, JsonAuthorsRepository>();
+            builder.Services.AddSingleton<IReviewsRepository, JsonReviewsRepository>();
 
             // "AllowedOrigins" comes from appsettings — falls back to the
             // Angular dev server if nothing is configured, rather than
@@ -53,9 +54,9 @@ namespace TheMorisakiBookshop
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-
             app.UseCors("AllowFrontendOrigin");
+
+            app.UseAuthorization();
 
             app.MapControllers();
 

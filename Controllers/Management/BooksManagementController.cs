@@ -46,6 +46,7 @@ namespace TheMorisakiBookshop.Controllers.Management
                 OldPrice = request.OldPrice,
                 AuthorId = request.AuthorId,
                 Genre = request.Genre,
+                Language = request.Language,
                 Specs = request.Specs
             };
 
@@ -68,6 +69,7 @@ namespace TheMorisakiBookshop.Controllers.Management
                 OldPrice = request.OldPrice,
                 AuthorId = request.AuthorId,
                 Genre = request.Genre,
+                Language = request.Language,
                 Specs = request.Specs
             };
 

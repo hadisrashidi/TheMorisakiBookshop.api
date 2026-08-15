@@ -5,6 +5,8 @@ namespace TheMorisakiBookshop.Controllers.Shop
 {
     public class AuthorsController : BaseController
     {
+        private const int SimilarAuthorsCount = 6;
+
         private readonly IAuthorsRepository _authorsRepository;
 
         public AuthorsController(IAuthorsRepository authorsRepository)
@@ -30,6 +32,13 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             return Ok(author);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSimilarAuthors(int id)
+        {
+            var similar = await _authorsRepository.GetSimilarAsync(id, SimilarAuthorsCount);
+            return Ok(similar);
         }
     }
 }

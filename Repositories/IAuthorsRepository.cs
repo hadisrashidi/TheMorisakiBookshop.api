@@ -6,5 +6,6 @@ namespace TheMorisakiBookshop.Repositories
     {
         Task<List<Authors>> GetAllAsync();
         Task<Authors?> GetByIdAsync(int id);
+        Task<List<Authors>> GetSimilarAsync(int id, int count);
     }
 }
