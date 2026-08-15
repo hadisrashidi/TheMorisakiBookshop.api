@@ -56,5 +56,35 @@ namespace TheMorisakiBookshop.Repositories
             var authors = await GetCacheAsync();
             return authors.FirstOrDefault(a => a.Id == id);
         }
+
+        public async Task<List<Authors>> GetSimilarAsync(int id, int count)
+        {
+            var authors = await GetCacheAsync();
+            var author = authors.FirstOrDefault(a => a.Id == id);
+            if (author == null)
+            {
+                return new List<Authors>();
+            }
+
+            var sameGenre = authors
+                .Where(a => a.Id != id && a.Genre == author.Genre && !string.IsNullOrEmpty(author.Genre))
+                .Take(count)
+                .ToList();
+
+            if (sameGenre.Count >= count)
+            {
+                return sameGenre;
+            }
+
+            // Small catalog — top up with other authors rather than showing
+            // a half-empty "similar authors" row when few share a genre.
+            var remaining = count - sameGenre.Count;
+            var alreadyPicked = sameGenre.Select(a => a.Id).Append(id).ToHashSet();
+            var fillers = authors
+                .Where(a => !alreadyPicked.Contains(a.Id))
+                .Take(remaining);
+
+            return sameGenre.Concat(fillers).ToList();
+        }
     }
 }
