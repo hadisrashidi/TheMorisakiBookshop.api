@@ -47,6 +47,8 @@ namespace TheMorisakiBookshop.Controllers.Management
                 AuthorId = request.AuthorId,
                 Genre = request.Genre,
                 Language = request.Language,
+                Description = request.Description,
+                InStock = request.InStock,
                 Specs = request.Specs
             };
 
@@ -70,6 +72,8 @@ namespace TheMorisakiBookshop.Controllers.Management
                 AuthorId = request.AuthorId,
                 Genre = request.Genre,
                 Language = request.Language,
+                Description = request.Description,
+                InStock = request.InStock,
                 Specs = request.Specs
             };
 

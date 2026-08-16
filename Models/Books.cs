@@ -9,6 +9,8 @@ namespace TheMorisakiBookshop.Models
 
         public string Title { get; set; } = "";
         public string Image { get; set; } = "";
+        public string Description { get; set; } = "";
+        public bool InStock { get; set; } = true;
 
         // Structured fields used for search/filtering/relating books, kept in
         // addition to (not instead of) the matching display rows in Specs so

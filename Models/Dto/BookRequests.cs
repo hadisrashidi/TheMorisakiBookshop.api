@@ -22,6 +22,10 @@ namespace TheMorisakiBookshop.Models.Dto
 
         public string Language { get; set; } = "";
 
+        public string Description { get; set; } = "";
+
+        public bool InStock { get; set; } = true;
+
         public List<BookSpec> Specs { get; set; } = new();
     }
 
@@ -44,6 +48,10 @@ namespace TheMorisakiBookshop.Models.Dto
         public string Genre { get; set; } = "";
 
         public string Language { get; set; } = "";
+
+        public string Description { get; set; } = "";
+
+        public bool InStock { get; set; } = true;
 
         public List<BookSpec> Specs { get; set; } = new();
     }
