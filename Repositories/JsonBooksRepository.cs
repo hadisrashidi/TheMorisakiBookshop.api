@@ -75,6 +75,31 @@ namespace TheMorisakiBookshop.Repositories
             return books.OrderByDescending(b => b.AddedAt).Take(count).ToList();
         }
 
+        // "پیشنهاد ویژه" — discounted titles, deepest discount first, so the
+        // section means something rather than just listing the whole catalog.
+        public async Task<List<Books>> GetFeaturedAsync(int count)
+        {
+            var books = await GetCacheAsync();
+
+            var discounted = books
+                .Where(b => !string.IsNullOrWhiteSpace(b.OldPrice) && b.InStock)
+                .OrderByDescending(b => ParsePrice(b.OldPrice) - ParsePrice(b.Price))
+                .Take(count)
+                .ToList();
+
+            if (discounted.Count >= count)
+            {
+                return discounted;
+            }
+
+            var alreadyPicked = discounted.Select(b => b.Id).ToHashSet();
+            var fillers = books
+                .Where(b => b.InStock && !alreadyPicked.Contains(b.Id))
+                .Take(count - discounted.Count);
+
+            return discounted.Concat(fillers).ToList();
+        }
+
         // "محصولات مرتبط" (sidebar, book detail) — same author first; an
         // author with only one title falls back to other authors so the
         // section is never empty without reason.
@@ -167,6 +192,7 @@ namespace TheMorisakiBookshop.Repositories
             results = sort switch
             {
                 "price_asc" => results.OrderBy(b => ParsePrice(b.Price)),
+                "price_desc" => results.OrderByDescending(b => ParsePrice(b.Price)),
                 "newest" => results.OrderByDescending(b => b.AddedAt),
                 _ => results
             };

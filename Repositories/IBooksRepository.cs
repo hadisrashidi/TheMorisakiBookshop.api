@@ -7,6 +7,7 @@ namespace TheMorisakiBookshop.Repositories
         Task<List<Books>> GetAllAsync();
         Task<Books?> GetByIdAsync(int id);
         Task<List<Books>> GetNewestAsync(int count);
+        Task<List<Books>> GetFeaturedAsync(int count);
         Task<List<Books>> GetRelatedAsync(int id, int count);
         Task<List<Books>> GetSimilarAsync(int id, int count);
         Task<List<Books>> GetByAuthorAsync(int authorId);
