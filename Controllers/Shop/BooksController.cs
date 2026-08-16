@@ -65,9 +65,9 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchBooks(string? q, [FromQuery] string[]? genres, [FromQuery] string[]? languages, string? sort)
+        public async Task<IActionResult> SearchBooks(string? q, [FromQuery] string[]? genres, [FromQuery] string[]? languages, string? sort, bool? inStockOnly)
         {
-            var results = await _booksRepository.SearchAsync(q, genres, languages, sort);
+            var results = await _booksRepository.SearchAsync(q, genres, languages, sort, inStockOnly);
             return Ok(results);
         }
     }

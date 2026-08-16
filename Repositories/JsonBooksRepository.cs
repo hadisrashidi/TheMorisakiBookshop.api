@@ -135,7 +135,7 @@ namespace TheMorisakiBookshop.Repositories
             return books.Where(b => b.AuthorId == authorId).ToList();
         }
 
-        public async Task<List<Books>> SearchAsync(string? query, string[]? genres = null, string[]? languages = null, string? sort = null)
+        public async Task<List<Books>> SearchAsync(string? query, string[]? genres = null, string[]? languages = null, string? sort = null, bool? inStockOnly = null)
         {
             var books = await GetCacheAsync();
             IEnumerable<Books> results = books;
@@ -157,6 +157,11 @@ namespace TheMorisakiBookshop.Repositories
             if (languages is { Length: > 0 })
             {
                 results = results.Where(b => languages.Contains(b.Language));
+            }
+
+            if (inStockOnly == true)
+            {
+                results = results.Where(b => b.InStock);
             }
 
             results = sort switch
@@ -214,6 +219,8 @@ namespace TheMorisakiBookshop.Repositories
                 existing.AuthorId = book.AuthorId;
                 existing.Genre = book.Genre;
                 existing.Language = book.Language;
+                existing.Description = book.Description;
+                existing.InStock = book.InStock;
                 existing.Specs = book.Specs;
 
                 await SaveAsync(_cache);
