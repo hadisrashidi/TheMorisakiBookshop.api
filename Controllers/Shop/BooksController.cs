@@ -6,6 +6,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
     public class BooksController : BaseController
     {
         private const int NewBooksCount = 8;
+        private const int FeaturedBooksCount = 4;
         private const int RelatedBooksCount = 3;
         private const int SimilarBooksCount = 4;
 
@@ -27,6 +28,13 @@ namespace TheMorisakiBookshop.Controllers.Shop
         public async Task<IActionResult> GetNewBooks()
         {
             var books = await _booksRepository.GetNewestAsync(NewBooksCount);
+            return Ok(books);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFeaturedBooks()
+        {
+            var books = await _booksRepository.GetFeaturedAsync(FeaturedBooksCount);
             return Ok(books);
         }
 
