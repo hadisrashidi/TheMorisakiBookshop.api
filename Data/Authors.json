@@ -2,84 +2,84 @@
   {
     "Id": 1,
     "Name": "Haruki Murakami",
-    "Image": "https://picsum.photos/seed/author-murakami/200/200",
+    "Image": "/authors/author-murakami.svg",
     "Genre": "رمان",
     "Bio": "نویسنده ژاپنی، شناخته‌شده برای آثار رئالیسم جادویی و روایت‌های رویاگونه‌ای که فرهنگ پاپ و تنهایی مدرن را در هم می‌آمیزند."
   },
   {
     "Id": 2,
     "Name": "Khaled Hosseini",
-    "Image": "https://picsum.photos/seed/author-hosseini/200/200",
+    "Image": "/authors/author-hosseini.svg",
     "Genre": "رمان",
     "Bio": "نویسنده افغان-آمریکایی، خالق رمان‌های پرفروشی که سرنوشت انسان‌ها را در دل تاریخ پرتلاطم افغانستان روایت می‌کنند."
   },
   {
     "Id": 3,
     "Name": "Elif Shafak",
-    "Image": "https://picsum.photos/seed/author-shafak/200/200",
+    "Image": "/authors/author-shafak.svg",
     "Genre": "رمان",
     "Bio": "نویسنده ترک-بریتانیایی، آثارش عرفان، عشق و هویت را در روایت‌هایی چندلایه و جهان‌شمول پیوند می‌زند."
   },
   {
     "Id": 4,
     "Name": "صادق هدایت",
-    "Image": "https://picsum.photos/seed/author-hedayat/200/200",
+    "Image": "/authors/author-hedayat.svg",
     "Genre": "ادبیات داستانی",
     "Bio": "پیشگام داستان‌نویسی نوین فارسی؛ آثارش با فضایی تاریک و درون‌گرا، تأثیر عمیقی بر ادبیات معاصر ایران گذاشت."
   },
   {
     "Id": 5,
     "Name": "Fyodor Dostoevsky",
-    "Image": "https://picsum.photos/seed/author-dostoevsky/200/200",
+    "Image": "/authors/author-dostoevsky.svg",
     "Genre": "کلاسیک",
     "Bio": "رمان‌نویس روس و از ستون‌های ادبیات کلاسیک جهان؛ آثارش به کاوش عمیق در روان و اخلاق انسانی شهرت دارند."
   },
   {
     "Id": 6,
     "Name": "Kazuo Ishiguro",
-    "Image": "https://picsum.photos/seed/author-ishiguro/200/200",
+    "Image": "/authors/author-ishiguro.svg",
     "Genre": "ادبیات داستانی",
     "Bio": "نویسنده بریتانیایی-ژاپنی و برنده جایزه نوبل ادبیات، شناخته‌شده برای نثر آرام و روایت‌های عمیقاً انسانی."
   },
   {
     "Id": 7,
     "Name": "Satoshi Yagisawa",
-    "Image": "https://picsum.photos/seed/author-yagisawa/200/200",
+    "Image": "/authors/author-yagisawa.svg",
     "Genre": "رمان",
     "Bio": "نویسنده ژاپنی، خالق داستان‌هایی گرم و دلنشین درباره کتاب، خانواده و کتابفروشی‌های محله‌ای جیمبوچو."
   },
   {
     "Id": 8,
     "Name": "فریبا وفی",
-    "Image": "https://picsum.photos/seed/author-vafi/200/200",
+    "Image": "/authors/author-vafi.svg",
     "Genre": "داستان کوتاه",
     "Bio": "نویسنده ایرانی، شناخته‌شده برای داستان‌های کوتاه و رمان‌هایی با نگاهی صمیمی به زندگی روزمره زنان."
   },
   {
     "Id": 9,
     "Name": "Agatha Christie",
-    "Image": "https://picsum.photos/seed/author-christie/200/200",
+    "Image": "/authors/author-christie.svg",
     "Genre": "جنایی",
     "Bio": "ملقب به «ملکه جنایت»، یکی از پرفروش‌ترین نویسندگان تاریخ ادبیات و پیشگام رمان‌های معمایی کلاسیک."
   },
   {
     "Id": 10,
     "Name": "Franz Kafka",
-    "Image": "https://picsum.photos/seed/author-kafka/200/200",
+    "Image": "/authors/author-kafka.svg",
     "Genre": "کلاسیک",
     "Bio": "نویسنده چک‌تبار آلمانی‌زبان، آثارش با فضایی اگزیستانسیال و پوچ، از ستون‌های ادبیات مدرن اروپا به شمار می‌روند."
   },
   {
     "Id": 11,
     "Name": "Albert Camus",
-    "Image": "https://picsum.photos/seed/author-camus/200/200",
+    "Image": "/authors/author-camus.svg",
     "Genre": "کلاسیک",
     "Bio": "نویسنده و فیلسوف فرانسوی-الجزایری، برنده جایزه نوبل و از چهره‌های اصلی فلسفه پوچی."
   },
   {
     "Id": 12,
     "Name": "Orhan Pamuk",
-    "Image": "https://picsum.photos/seed/author-pamuk/200/200",
+    "Image": "/authors/author-pamuk.svg",
     "Genre": "رمان",
     "Bio": "نویسنده ترک و برنده جایزه نوبل ادبیات، شناخته‌شده برای رمان‌هایی که تاریخ، هنر و هویت شرق و غرب را در هم می‌تنند."
   }
