@@ -7,7 +7,7 @@
 
 ### Phase 0 — Foundation
 1. Introduce the response envelope (skill `dotnet-simple` → "Response envelope"): add `Models/CustomActionResult.cs` + `Models/CustomActionResultOfT.cs`, validation + exception handler in `Program.cs`, wrap every action in all 4 controllers in `Ok(new CustomActionResult...)` (replace `NotFound`, `NoContent`, `CreatedAtAction`). Contract change → see "For the UI repo".
-2. Add NuGet packages `Dapper` and `Microsoft.Data.SqlClient` (ask her first, explain what each does); add `ConnectionStrings:Bookshop` for SQL Server in Docker (SQL login `sa`, **password NOT in the repo** → `dotnet user-secrets`, no extra package). Give her the `docker run` command + `CREATE DATABASE MorisakiBookshop;` step.
+2. Add NuGet packages `Dapper` and `Microsoft.Data.SqlClient` (ask her first, explain what each does); add `ConnectionStrings:Bookshop` for SQL Server in Docker (SQL login `sa`, password in `appsettings.Development.json` — local only, her decision 2026-10-07). She starts the Docker container herself and creates the empty `MorisakiBookshop` database; she tells me the port/password she used.
 3. Migration: create tables `Authors`, `Books`, `BookSpecs`, `Reviews` (re-runnable) + seed them from `Data/*.json`, keeping the same Ids (UI routes use them).
    - Price columns `DECIMAL(18,0)` (decided 2026-10-07) instead of the current strings ("185000") — C# `Price`/`OldPrice` become `decimal`; UI must be told (see "For the UI repo").
    - Add stock column (`Stock INT`) now so phase 3 does not need a table rework.

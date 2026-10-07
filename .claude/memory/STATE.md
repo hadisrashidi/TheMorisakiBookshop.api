@@ -18,7 +18,8 @@ Onboarding: done (2026-10-07)
 <!-- newest on top, max 5 blocks, older ones go to archive/sessions.md -->
 ### 2026-10-07 — Onboarding + planning (web session, both repos on branch `claude/magical-wozniak-j0qmxf`)
 - Did: onboarding done; she told the project story and scope; agreed roadmap phases 0-6 → BACKLOG tasks 1-26; decisions logged (goal, login OTP + email/password, transactional orders, roadmap).
-- Result: memory only, no app code changed. UI repo memory updated to match.
+- Also: DB = SQL Server in Docker (`sa`, local password in appsettings.Development.json), prices `DECIMAL(18,0)`, guest cart in browser; updated CLAUDE.md, ONBOARDING.md, skill `sql-server-dapper` connection string accordingly.
+- Result: memory + instruction files only, no app code changed. UI repo memory updated to match.
 - Next: she adds more tasks / explains more, then says "start" → task 1.
 ### 2026-10-04 — Claude setup (done locally by a helper, not a web session)
 - Did: created `.claude/` (CLAUDE.md, memory, skills `dotnet-simple` + `sql-server-dapper`, Stop hook), `Database/Migrations/README.md`.

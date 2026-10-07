@@ -207,10 +207,10 @@ Writes touching several tables (e.g. a book and its specs): one procedure,
 ## Dapper repository template
 
 Packages: `Dapper`, `Microsoft.Data.SqlClient` (ask her before adding them the first time).
-Connection string in `appsettings.Development.json` (Windows auth, no password):
+Connection string in `appsettings.Development.json` (local SQL Server in Docker, `sa` login, local-only throwaway password):
 ```json
 "ConnectionStrings": {
-  "Bookshop": "Server=localhost;Database=MorisakiBookshop;Trusted_Connection=True;TrustServerCertificate=True;"
+  "Bookshop": "Server=localhost,1433;Database=MorisakiBookshop;User Id=sa;Password=<her local password>;TrustServerCertificate=True;"
 }
 ```
 
