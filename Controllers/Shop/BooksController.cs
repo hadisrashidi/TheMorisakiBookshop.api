@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Repositories;
 
 namespace TheMorisakiBookshop.Controllers.Shop
@@ -20,63 +21,106 @@ namespace TheMorisakiBookshop.Controllers.Shop
         [HttpGet]
         public async Task<IActionResult> GetAllBooks()
         {
-            var books = await _booksRepository.GetAllAsync();
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetAllAsync();
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetNewBooks()
         {
-            var books = await _booksRepository.GetNewestAsync(NewBooksCount);
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetNewestAsync(NewBooksCount);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetFeaturedBooks()
         {
-            var books = await _booksRepository.GetFeaturedAsync(FeaturedBooksCount);
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetFeaturedAsync(FeaturedBooksCount);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetBookById(int id)
         {
-            var book = await _booksRepository.GetByIdAsync(id);
+            Books? book = await _booksRepository.GetByIdAsync(id);
 
             if (book == null)
             {
-                return NotFound($"Book with id {id} not found.");
+                return Ok(new CustomActionResult<Books>
+                {
+                    IsSuccess = false,
+                    Message = $"Book with id {id} not found."
+                });
             }
 
-            return Ok(book);
+            return Ok(new CustomActionResult<Books>
+            {
+                IsSuccess = true,
+                Data = book
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRelatedBooks(int id)
         {
-            var related = await _booksRepository.GetRelatedAsync(id, RelatedBooksCount);
-            return Ok(related);
+            List<Books> related = await _booksRepository.GetRelatedAsync(id, RelatedBooksCount);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = related
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSimilarBooks(int id)
         {
-            var similar = await _booksRepository.GetSimilarAsync(id, SimilarBooksCount);
-            return Ok(similar);
+            List<Books> similar = await _booksRepository.GetSimilarAsync(id, SimilarBooksCount);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = similar
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetBooksByAuthor(int authorId)
         {
-            var books = await _booksRepository.GetByAuthorAsync(authorId);
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetByAuthorAsync(authorId);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> SearchBooks(string? q, [FromQuery] string[]? genres, [FromQuery] string[]? languages, string? sort, bool? inStockOnly)
         {
-            var results = await _booksRepository.SearchAsync(q, genres, languages, sort, inStockOnly);
-            return Ok(results);
+            List<Books> results = await _booksRepository.SearchAsync(q, genres, languages, sort, inStockOnly);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = results
+            });
         }
     }
 }

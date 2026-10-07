@@ -54,7 +54,7 @@ The first backlog items move the data from the JSON files in `Data/` into SQL Se
 (packages → tables + seed → stored procedures → Dapper repositories). See `memory/BACKLOG.md`.
 
 ## 8. What she needs locally
-- .NET 8 SDK, SQL Server (Developer or Express edition), SSMS.
+- .NET 8 SDK, Docker Desktop with SQL Server in a container (Windows/Intel), SSMS or Azure Data Studio.
 - An empty database: `CREATE DATABASE MorisakiBookshop;`
-- Connection string uses `Server=localhost`; with SQL Server Express it is `Server=localhost\SQLEXPRESS` — tell Claude which one she has.
+- Connection string uses `Server=localhost,1433` with the `sa` login (Docker SQL Server has no Windows authentication); she starts the container herself and keeps the password in `appsettings.Development.json` (local only).
 - Run the API: `dotnet run` (Swagger opens in Development).

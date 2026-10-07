@@ -35,7 +35,7 @@ If `memory/STATE.md` says `Onboarding: pending`: before any other work, walk her
   (see skill `sql-server-dapper`). You never run SQL anywhere; she runs the scripts on her
   local database. After writing a script, add it to `BACKLOG.md` → "SQL to run".
 - No new NuGet package without asking her first.
-- Never commit secrets. Local connection string uses Windows authentication (no password).
+- Never commit secrets. The local Docker SQL Server login (`sa` + throwaway local password) may live in `appsettings.Development.json`; real/production credentials never go in the repo.
 - Build must pass before you commit: `dotnet build`.
 
 ## Memory protocol — update DURING the session, not only at the end
