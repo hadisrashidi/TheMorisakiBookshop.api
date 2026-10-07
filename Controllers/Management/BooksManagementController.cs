@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using TheMorisakiBookshop.Controllers.Shop;
 using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Models.Dto;
 using TheMorisakiBookshop.Repositories;
@@ -24,21 +23,31 @@ namespace TheMorisakiBookshop.Controllers.Management
         [HttpGet]
         public async Task<IActionResult> GetAllBooks()
         {
-            var books = await _booksRepository.GetAllAsync();
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetAllAsync();
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllNewBooks()
         {
-            var books = await _booksRepository.GetNewestAsync(NewBooksCount);
-            return Ok(books);
+            List<Books> books = await _booksRepository.GetNewestAsync(NewBooksCount);
+
+            return Ok(new CustomActionResult<List<Books>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
-            var book = new Books
+            Books book = new Books
             {
                 Title = request.Title,
                 Image = request.Image,
@@ -52,18 +61,19 @@ namespace TheMorisakiBookshop.Controllers.Management
                 Specs = request.Specs
             };
 
-            var created = await _booksRepository.CreateAsync(book);
-            return CreatedAtAction(
-                actionName: nameof(BooksController.GetBookById),
-                controllerName: "Books",
-                routeValues: new { id = created.Id },
-                value: created);
+            Books created = await _booksRepository.CreateAsync(book);
+
+            return Ok(new CustomActionResult<Books>
+            {
+                IsSuccess = true,
+                Data = created
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateBook(int id, [FromBody] UpdateBookRequest request)
         {
-            var book = new Books
+            Books book = new Books
             {
                 Title = request.Title,
                 Image = request.Image,
@@ -77,27 +87,42 @@ namespace TheMorisakiBookshop.Controllers.Management
                 Specs = request.Specs
             };
 
-            var updated = await _booksRepository.UpdateAsync(id, book);
+            Books? updated = await _booksRepository.UpdateAsync(id, book);
 
             if (updated == null)
             {
-                return NotFound($"Book with id {id} not found.");
+                return Ok(new CustomActionResult<Books>
+                {
+                    IsSuccess = false,
+                    Message = $"Book with id {id} not found."
+                });
             }
 
-            return Ok(updated);
+            return Ok(new CustomActionResult<Books>
+            {
+                IsSuccess = true,
+                Data = updated
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var deleted = await _booksRepository.DeleteAsync(id);
+            bool deleted = await _booksRepository.DeleteAsync(id);
 
             if (!deleted)
             {
-                return NotFound($"Book with id {id} not found.");
+                return Ok(new CustomActionResult
+                {
+                    IsSuccess = false,
+                    Message = $"Book with id {id} not found."
+                });
             }
 
-            return NoContent();
+            return Ok(new CustomActionResult
+            {
+                IsSuccess = true
+            });
         }
     }
 }

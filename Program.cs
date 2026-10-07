@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Repositories;
 
 namespace TheMorisakiBookshop
@@ -8,7 +11,27 @@ namespace TheMorisakiBookshop
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    // Validation errors use the same envelope as every other response.
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        CustomActionResult result = new CustomActionResult();
+                        result.IsSuccess = false;
+                        result.Message = "The request is not valid.";
+
+                        foreach (KeyValuePair<string, ModelStateEntry> entry in context.ModelState)
+                        {
+                            foreach (ModelError error in entry.Value.Errors)
+                            {
+                                result.Errors.Add(error.ErrorMessage);
+                            }
+                        }
+
+                        return new BadRequestObjectResult(result);
+                    };
+                });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -34,22 +57,25 @@ namespace TheMorisakiBookshop
 
             var app = builder.Build();
 
+            // Unexpected exceptions become a 500 with the standard envelope (also in
+            // Development, so the Angular app sees the same shape everywhere).
+            app.UseExceptionHandler(handler =>
+            {
+                handler.Run(async context =>
+                {
+                    CustomActionResult result = new CustomActionResult();
+                    result.IsSuccess = false;
+                    result.Message = "An unexpected error occurred.";
+
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    await context.Response.WriteAsJsonAsync(result);
+                });
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
-            else
-            {
-                app.UseExceptionHandler(handler =>
-                {
-                    handler.Run(async context =>
-                    {
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsJsonAsync(new { message = "An unexpected error occurred." });
-                    });
-                });
             }
 
             app.UseHttpsRedirection();
@@ -63,4 +89,4 @@ namespace TheMorisakiBookshop
             app.Run();
         }
     }
-}
+}

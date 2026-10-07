@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Repositories;
 
 namespace TheMorisakiBookshop.Controllers.Shop
@@ -17,16 +18,26 @@ namespace TheMorisakiBookshop.Controllers.Shop
         [HttpGet]
         public async Task<IActionResult> GetByBookId(int bookId)
         {
-            var reviews = await _reviewsRepository.GetByBookIdAsync(bookId);
-            return Ok(reviews);
+            List<Review> reviews = await _reviewsRepository.GetByBookIdAsync(bookId);
+
+            return Ok(new CustomActionResult<List<Review>>
+            {
+                IsSuccess = true,
+                Data = reviews
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetByAuthorId(int authorId)
         {
-            var books = await _booksRepository.GetByAuthorAsync(authorId);
-            var reviews = await _reviewsRepository.GetByBookIdsAsync(books.Select(b => b.Id));
-            return Ok(reviews);
+            List<Books> books = await _booksRepository.GetByAuthorAsync(authorId);
+            List<Review> reviews = await _reviewsRepository.GetByBookIdsAsync(books.Select(b => b.Id));
+
+            return Ok(new CustomActionResult<List<Review>>
+            {
+                IsSuccess = true,
+                Data = reviews
+            });
         }
     }
 }

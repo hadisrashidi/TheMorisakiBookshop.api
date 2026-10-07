@@ -1,6 +1,7 @@
 # Decisions
 <!-- active decisions only, newest on top: YYYY-MM-DD: WHAT — WHY. Superseded ones go to archive/decisions.md -->
 
+- 2026-10-07: Exception handler (500 + envelope) is active in every environment, not only Production — the Angular app sees one error shape while developing; the exception is still logged by the framework.
 - 2026-10-07: Local database = SQL Server in Docker (Linux container → SQL login `sa`, not Windows auth); her own `docker run`, Windows/Intel machine. Local throwaway password may be in `appsettings.Development.json` (DB reachable only from her machine); production credentials must never be in the repo (env vars / secret store at deploy, task 25). Supersedes the "Windows authentication" rule.
 - 2026-10-07: Price columns `DECIMAL(18,0)` (numbers, no decimals — toman/rial are whole) instead of strings — correct type for money, sortable/filterable in SQL.
 - 2026-10-07: Guest cart lives in the browser (localStorage) and is merged into the server cart after login — visitors can fill a cart without registering, login is only needed at checkout.

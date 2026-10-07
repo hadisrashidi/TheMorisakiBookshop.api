@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Repositories;
 
 namespace TheMorisakiBookshop.Controllers.Shop
@@ -17,28 +18,46 @@ namespace TheMorisakiBookshop.Controllers.Shop
         [HttpGet]
         public async Task<IActionResult> GetAllAuthors()
         {
-            var authors = await _authorsRepository.GetAllAsync();
-            return Ok(authors);
+            List<Authors> authors = await _authorsRepository.GetAllAsync();
+
+            return Ok(new CustomActionResult<List<Authors>>
+            {
+                IsSuccess = true,
+                Data = authors
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAuthorById(int id)
         {
-            var author = await _authorsRepository.GetByIdAsync(id);
+            Authors? author = await _authorsRepository.GetByIdAsync(id);
 
             if (author == null)
             {
-                return NotFound($"Author with id {id} not found.");
+                return Ok(new CustomActionResult<Authors>
+                {
+                    IsSuccess = false,
+                    Message = $"Author with id {id} not found."
+                });
             }
 
-            return Ok(author);
+            return Ok(new CustomActionResult<Authors>
+            {
+                IsSuccess = true,
+                Data = author
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSimilarAuthors(int id)
         {
-            var similar = await _authorsRepository.GetSimilarAsync(id, SimilarAuthorsCount);
-            return Ok(similar);
+            List<Authors> similar = await _authorsRepository.GetSimilarAsync(id, SimilarAuthorsCount);
+
+            return Ok(new CustomActionResult<List<Authors>>
+            {
+                IsSuccess = true,
+                Data = similar
+            });
         }
     }
 }
