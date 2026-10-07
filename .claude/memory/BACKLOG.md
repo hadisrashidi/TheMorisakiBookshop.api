@@ -7,9 +7,9 @@
 
 ### Phase 0 — Foundation
 1. Introduce the response envelope (skill `dotnet-simple` → "Response envelope"): add `Models/CustomActionResult.cs` + `Models/CustomActionResultOfT.cs`, validation + exception handler in `Program.cs`, wrap every action in all 4 controllers in `Ok(new CustomActionResult...)` (replace `NotFound`, `NoContent`, `CreatedAtAction`). Contract change → see "For the UI repo".
-2. Add NuGet packages `Dapper` and `Microsoft.Data.SqlClient` (ask her first, explain what each does); add `ConnectionStrings:Bookshop` to `appsettings.Development.json` (Windows auth).
+2. Add NuGet packages `Dapper` and `Microsoft.Data.SqlClient` (ask her first, explain what each does); add `ConnectionStrings:Bookshop` for SQL Server in Docker (SQL login `sa`, **password NOT in the repo** → `dotnet user-secrets`, no extra package). Give her the `docker run` command + `CREATE DATABASE MorisakiBookshop;` step.
 3. Migration: create tables `Authors`, `Books`, `BookSpecs`, `Reviews` (re-runnable) + seed them from `Data/*.json`, keeping the same Ids (UI routes use them).
-   - Decide with her: price columns as `DECIMAL(12,0)` instead of the current strings ("185000") — C# `Price`/`OldPrice` would become `decimal`, and the UI must be told.
+   - Price columns `DECIMAL(18,0)` (decided 2026-10-07) instead of the current strings ("185000") — C# `Price`/`OldPrice` become `decimal`; UI must be told (see "For the UI repo").
    - Add stock column (`Stock INT`) now so phase 3 does not need a table rework.
 4. Migration: stored procedures for every current repository method (Books: GetAll, GetById, GetNewest, GetFeatured, GetRelated, GetSimilar, GetByAuthor, Search, Insert, Update, Delete; Authors; Reviews: GetByBookId, GetByAuthorId).
 5. Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
@@ -58,10 +58,9 @@
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (after task 1) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape.
 - UI `public/env/env.js` points to `https://localhost:44388/api/`, but `Properties/launchSettings.json` uses `https://localhost:7106` / `http://localhost:5074` — align one of them.
+- (after tasks 3-5) `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
 - (planned, phases 2-4) New endpoint groups will appear: auth (OTP, email+password), profile/addresses, cart, orders, payment. Contracts are written here when each task is designed.
 
 ## Questions for her
-- SQL Server instance: `localhost` or `localhost\SQLEXPRESS`?
-- Prices as `DECIMAL(12,0)` numbers instead of strings (task 3)?
 - Payment gateway choice and its production requirements (task 18).
 - SMS provider for OTP (task 11).

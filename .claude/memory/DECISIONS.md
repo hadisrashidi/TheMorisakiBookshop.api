@@ -1,6 +1,8 @@
 # Decisions
 <!-- active decisions only, newest on top: YYYY-MM-DD: WHAT — WHY. Superseded ones go to archive/decisions.md -->
 
+- 2026-10-07: Local database = SQL Server in Docker (Linux container → SQL login `sa`, not Windows auth); password only in `dotnet user-secrets` / environment, never in the repo. Replaces the "Windows authentication" line in `.claude/CLAUDE.md` (to be updated).
+- 2026-10-07: Price columns `DECIMAL(18,0)` (numbers, no decimals — toman/rial are whole) instead of strings — correct type for money, sortable/filterable in SQL.
 - 2026-10-07: Guest cart lives in the browser (localStorage) and is merged into the server cart after login — visitors can fill a cart without registering, login is only needed at checkout.
 - 2026-10-07: Roadmap order phases 0-6 (foundation → catalog → accounts → cart/orders/stock → payment/shipping → admin → ready to sell), see BACKLOG — each phase builds on the previous; admin protection must exist before any public launch.
 - 2026-10-07: Order placement and stock decrease happen in one stored procedure inside a transaction; order lines store the price at purchase time — prevents wrong stock counts and changed old orders (her past pain with other shops).
