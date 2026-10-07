@@ -31,7 +31,7 @@
 14. Roles: `Customer`, `Admin` (needed by phase 5).
 
 ### Phase 3 — Cart, orders, stock
-15. Cart stored per user in DB (guest cart stays in UI localStorage and merges at login — decide with her).
+15. Cart stored per user in DB; guest cart stays in UI localStorage and is merged into the server cart right after login (decided 2026-10-07).
 16. Place order = ONE stored procedure with a transaction: checks stock, decreases stock, creates `Orders` + `OrderLines`. Price of every line is copied into the order at purchase time (later price changes must not change old orders). Not enough stock = `isSuccess: false` with a clear message.
 17. Orders list/details endpoints for the logged-in user (UI "orders" page).
 
@@ -63,6 +63,5 @@
 ## Questions for her
 - SQL Server instance: `localhost` or `localhost\SQLEXPRESS`?
 - Prices as `DECIMAL(12,0)` numbers instead of strings (task 3)?
-- Guest cart: keep in browser and merge at login? (task 15)
 - Payment gateway choice and its production requirements (task 18).
 - SMS provider for OTP (task 11).

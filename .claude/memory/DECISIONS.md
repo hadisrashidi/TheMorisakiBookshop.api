@@ -1,6 +1,7 @@
 # Decisions
 <!-- active decisions only, newest on top: YYYY-MM-DD: WHAT — WHY. Superseded ones go to archive/decisions.md -->
 
+- 2026-10-07: Guest cart lives in the browser (localStorage) and is merged into the server cart after login — visitors can fill a cart without registering, login is only needed at checkout.
 - 2026-10-07: Roadmap order phases 0-6 (foundation → catalog → accounts → cart/orders/stock → payment/shipping → admin → ready to sell), see BACKLOG — each phase builds on the previous; admin protection must exist before any public launch.
 - 2026-10-07: Order placement and stock decrease happen in one stored procedure inside a transaction; order lines store the price at purchase time — prevents wrong stock counts and changed old orders (her past pain with other shops).
 - 2026-10-07: Login = mobile + OTP first, email + password as optional second method later (same JWT afterwards) — OTP is the common way in Iran and avoids storing passwords; two methods = more code, so the second one waits until the first works.
