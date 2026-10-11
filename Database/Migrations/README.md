@@ -7,7 +7,4 @@ SQL scripts for the `MorisakiBookshop` SQL Server database.
 - Scripts are never edited after they are delivered; a change is always a new, higher number.
 - Which scripts are still waiting to be run: `.claude/memory/BACKLOG.md` → "SQL to run".
 
-First time only:
-```sql
-CREATE DATABASE MorisakiBookshop;
-```
+`0001_create_database.sql` creates the database itself, so run it connected to `master`; every script after it is run against `MorisakiBookshop`.

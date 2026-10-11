@@ -5,4 +5,7 @@
 - `ConfigureApiBehaviorOptions` in `Program.cs` = a global setting for `[ApiController]` behaviour; here it makes validation errors (400) use our envelope — like an Angular `HttpInterceptor` shaping errors in one place.
 - `app.UseExceptionHandler` = global error handler middleware, like Angular `ErrorHandler` — any unhandled exception ends up here and becomes the 500 envelope.
 - `?` after a type (`string?`, `Books?`) = may be `null`, like `string | null` in TypeScript (`Nullable` is enabled in the csproj).
+- NuGet package (`<PackageReference>` in the `.csproj`) = npm dependency in `package.json`; `dotnet add package X` = `npm install X`. `Dapper` runs SQL/stored procedures and maps rows to classes; `Microsoft.Data.SqlClient` is the driver that talks to SQL Server.
+- `ConnectionStrings:Bookshop` in `appsettings.json` = a value in Angular `environment.ts`; `appsettings.Development.json` overrides it in Development (like `environment.development.ts`). Read later with `configuration.GetConnectionString("Bookshop")`.
+- Collation = the rules a database uses to compare/sort text. `CI` = case-insensitive, `AI` = accent-insensitive; `Persian_100` = Persian sorting rules. Set once on the database (`CREATE DATABASE ... COLLATE ...`).
 - Middleware order in `Program.cs` matters (exception handler → Swagger → HTTPS → CORS → authorization → controllers), like the order of Angular interceptors.
