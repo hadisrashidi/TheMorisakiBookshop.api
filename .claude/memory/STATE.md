@@ -8,15 +8,19 @@ Onboarding: done (2026-10-07)
 - All endpoints return the `CustomActionResult` envelope (always HTTP 200; 400 validation / 500 error with same shape).
 - Controllers: `Controllers/Shop/` (Books, Authors, Reviews — read only), `Controllers/Management/BooksManagementController.cs` (create/update/delete books, no auth yet).
 - Data today = JSON files in `Data/` (Books, Authors, Reviews) read by `Repositories/Json*Repository.cs` behind `I*Repository` interfaces. In-memory cache + `SemaphoreSlim`, filtering/sorting done with LINQ in C#.
-- Dapper / SQL Server not added yet. `Database/Migrations/` exists, no scripts yet.
+- Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files (not used by code yet). `Database/Migrations/0001_create_database.sql` written (collation `Persian_100_CI_AI`), not yet run by her.
 - CORS origins from `Cors:AllowedOrigins` (Development: `http://localhost:4200`).
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0 started. Task 1 (envelope) done. Next: task 2 (Dapper + SqlClient packages — ask her first).
+- Phase 0: task 1 done; task 2 code done, waiting for her to start Docker SQL Server + run 0001. Next: task 3 (tables + seed migration).
 
 ## Session log
 <!-- newest on top, max 5 blocks, older ones go to archive/sessions.md -->
+### 2026-10-11 — Task 2: packages, connection string, create-database script (web session, branch `claude/practical-pascal-zuq4fk`)
+- Did: she merged the previous PR; added `Dapper` + `Microsoft.Data.SqlClient`; `ConnectionStrings:Bookshop` in `appsettings.json` and `appsettings.Development.json` (localhost,1433, `sa`, local throwaway password); `Database/Migrations/0001_create_database.sql` (`Persian_100_CI_AI`); updated migrations README. `dotnet build` ok (SDK re-installed via apt).
+- Decisions: logged (password in both appsettings, collation, packages).
+- Next: she starts Docker + runs 0001; then task 3.
 ### 2026-10-07 — Onboarding, planning, envelope (web session, both repos on branch `claude/magical-wozniak-j0qmxf`)
 - Did: onboarding done; she told the project story and scope; agreed roadmap phases 0-6 → BACKLOG tasks 1-26; decisions logged (goal, login OTP + email/password, transactional orders, roadmap).
 - Also: DB = SQL Server in Docker (`sa`, local password in appsettings.Development.json), prices `DECIMAL(18,0)`, guest cart in browser; updated CLAUDE.md, ONBOARDING.md, skill `sql-server-dapper` connection string accordingly.

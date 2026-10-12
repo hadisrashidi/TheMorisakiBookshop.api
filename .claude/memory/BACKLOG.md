@@ -6,7 +6,7 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-2. Add NuGet packages `Dapper` and `Microsoft.Data.SqlClient` (ask her first, explain what each does); add `ConnectionStrings:Bookshop` for SQL Server in Docker (SQL login `sa`, password in `appsettings.Development.json` — local only, her decision 2026-10-07). She starts the Docker container herself and creates the empty `MorisakiBookshop` database; she tells me the port/password she used.
+2. (code DONE 2026-10-11: packages `Dapper` 2.1.89 + `Microsoft.Data.SqlClient` 7.1.1, `ConnectionStrings:Bookshop` in both appsettings files, localhost,1433 / `sa` / `Morisaki_Local_2026!`.) Left for her: start the Docker container with that password and run `0001_create_database.sql`; then tell me the connection works (I verify with the first repository, task 5). She may change port/password later — then edit both appsettings files.
 3. Migration: create tables `Authors`, `Books`, `BookSpecs`, `Reviews` (re-runnable) + seed them from `Data/*.json`, keeping the same Ids (UI routes use them).
    - Price columns `DECIMAL(18,0)` (decided 2026-10-07) instead of the current strings ("185000") — C# `Price`/`OldPrice` become `decimal`; UI must be told (see "For the UI repo").
    - Add stock column (`Stock INT`) now so phase 3 does not need a table rework.
@@ -46,12 +46,12 @@
 
 ### Phase 6 — Ready to sell
 24. Final header/footer, legal pages (terms, privacy, returns, shipping policy, contact), SEO basics, error pages.
-25. Security + deployment pass: HTTPS, CORS for the real domain, secrets outside the repo, rate limiting on OTP/login, backups of the database.
+25. Security + deployment pass: HTTPS, CORS for the real domain, secrets outside the repo (remove the local `sa` password from `appsettings.json` — see DECISIONS 2026-10-11), rate limiting on OTP/login, backups of the database.
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
 <!-- scripts she still has to execute locally, in this order. Remove a line when she confirms. -->
-- (none yet)
+- `Database/Migrations/0001_create_database.sql` — creates `MorisakiBookshop` with collation `Persian_100_CI_AI`; run while connected to `master`.
 
 ## For the UI repo
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->

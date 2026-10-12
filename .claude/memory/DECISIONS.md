@@ -1,4 +1,7 @@
 # Decisions
+- 2026-10-11: Local `sa` connection string (throwaway password) is in BOTH `appsettings.json` and `appsettings.Development.json` — her request, so the app also runs without the Development profile. Risk: anything deployed from `appsettings.json` carries it; must be removed and replaced by env vars before production (task 25).
+- 2026-10-11: Database collation `Persian_100_CI_AI` (case + accent insensitive), set in `0001_create_database.sql` — her request, so Persian search/sorting behaves naturally. Does NOT treat Arabic ي/ك as equal to Persian ی/ک; normalise those when saving/searching if it becomes a problem.
+- 2026-10-11: Added NuGet `Dapper` and `Microsoft.Data.SqlClient` — approved by her (data access = Dapper + stored procedures).
 <!-- active decisions only, newest on top: YYYY-MM-DD: WHAT — WHY. Superseded ones go to archive/decisions.md -->
 
 - 2026-10-07: Exception handler (500 + envelope) is active in every environment, not only Production — the Angular app sees one error shape while developing; the exception is still logged by the framework.
