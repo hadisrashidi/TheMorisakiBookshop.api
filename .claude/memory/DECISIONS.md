@@ -1,4 +1,6 @@
 # Decisions
+- 2026-10-12: No `InStock` column; `Books.Stock INT` (CHECK >= 0) is the only truth and `InStock` is computed as `Stock > 0` in the stored procedures — two columns for the same fact drift apart. Seed gives in-stock books `Stock = 10` (placeholder) and others 0. PROPOSED by Claude, awaiting her OK.
+- 2026-10-12: Catalog tables: `BookSpecs.SortOrder` keeps the display order of specs; `Reviews.Date` stays Jalali text (`NVARCHAR(10)`) as the UI shows it; empty `OldPrice` becomes `NULL`; `BookSpecs`/`Reviews` cascade-delete with their book; `AddedAt` is `DATETIME2(0)` UTC.
 - 2026-10-11: Local `sa` connection string (throwaway password) is in BOTH `appsettings.json` and `appsettings.Development.json` — her request, so the app also runs without the Development profile. Risk: anything deployed from `appsettings.json` carries it; must be removed and replaced by env vars before production (task 25).
 - 2026-10-11: Database collation `Persian_100_CI_AI` (case + accent insensitive), set in `0001_create_database.sql` — her request, so Persian search/sorting behaves naturally. Does NOT treat Arabic ي/ك as equal to Persian ی/ک; normalise those when saving/searching if it becomes a problem.
 - 2026-10-11: Added NuGet `Dapper` and `Microsoft.Data.SqlClient` — approved by her (data access = Dapper + stored procedures).

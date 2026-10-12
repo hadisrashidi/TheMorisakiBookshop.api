@@ -8,14 +8,19 @@ Onboarding: done (2026-10-07)
 - All endpoints return the `CustomActionResult` envelope (always HTTP 200; 400 validation / 500 error with same shape).
 - Controllers: `Controllers/Shop/` (Books, Authors, Reviews — read only), `Controllers/Management/BooksManagementController.cs` (create/update/delete books, no auth yet).
 - Data today = JSON files in `Data/` (Books, Authors, Reviews) read by `Repositories/Json*Repository.cs` behind `I*Repository` interfaces. In-memory cache + `SemaphoreSlim`, filtering/sorting done with LINQ in C#.
-- Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files (not used by code yet). `Database/Migrations/0001_create_database.sql` written (collation `Persian_100_CI_AI`), not yet run by her.
+- Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files (not used by code yet). `Database/Migrations/0001_create_database.sql` (collation `Persian_100_CI_AI`), `0002_create_catalog_tables.sql`, `0003_seed_catalog.sql` written, none run by her yet.
 - CORS origins from `Cors:AllowedOrigins` (Development: `http://localhost:4200`).
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: task 1 done; task 2 code done, waiting for her to start Docker SQL Server + run 0001. Next: task 3 (tables + seed migration).
+- Phase 0: tasks 1, 3 (scripts written) done; waiting for her to run 0001, 0002, 0003 on Docker SQL Server. Next: task 4 (stored procedures).
 
 ## Session log
+### 2026-10-12 — Task 3: catalog tables + seed (web session, branch `claude/eager-hawking-eaaako`)
+- Did: `0002_create_catalog_tables.sql` (Authors, Books, BookSpecs, Reviews; PK/FK/CHECK/indexes) and `0003_seed_catalog.sql` (generated from `Data/*.json`, same Ids, 12 authors / 13 books / specs / 26 reviews). Files saved with UTF-8 BOM so SSMS reads Persian correctly. No C# changed.
+- Decisions: `Stock` replaces stored `InStock` (proposed, needs her OK); seed Stock = 10 placeholder. Logged.
+- Not verified: scripts never run against SQL Server (I have none) — she runs them and reports errors.
+- Next: she runs 0001-0003; then task 4.
 <!-- newest on top, max 5 blocks, older ones go to archive/sessions.md -->
 ### 2026-10-11 — Task 2: packages, connection string, create-database script (web session, branch `claude/practical-pascal-zuq4fk`)
 - Did: she merged the previous PR; added `Dapper` + `Microsoft.Data.SqlClient`; `ConnectionStrings:Bookshop` in `appsettings.json` and `appsettings.Development.json` (localhost,1433, `sa`, local throwaway password); `Database/Migrations/0001_create_database.sql` (`Persian_100_CI_AI`); updated migrations README. `dotnet build` ok (SDK re-installed via apt).
