@@ -13,19 +13,19 @@ namespace TheMorisakiBookshop.Controllers.Management
     {
         private const int NewBooksCount = 8;
 
-        private readonly IBooksRepository _booksRepository;
+        private readonly BooksRepository _booksRepository;
 
-        public BooksManagementController(IBooksRepository booksRepository)
+        public BooksManagementController(BooksRepository booksRepository)
         {
             _booksRepository = booksRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks(CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetAllAsync();
+            List<BookOutputModel> books = await _booksRepository.GetAllAsync(cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -33,11 +33,11 @@ namespace TheMorisakiBookshop.Controllers.Management
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllNewBooks()
+        public async Task<IActionResult> GetAllNewBooks(CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetNewestAsync(NewBooksCount);
+            List<BookOutputModel> books = await _booksRepository.GetNewestAsync(NewBooksCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -45,25 +45,14 @@ namespace TheMorisakiBookshop.Controllers.Management
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
+        public async Task<IActionResult> CreateBook([FromBody] CreateBookRequestModel request, CancellationToken cancellationToken)
         {
-            Books book = new Books
-            {
-                Title = request.Title,
-                Image = request.Image,
-                Price = request.Price,
-                OldPrice = request.OldPrice,
-                AuthorId = request.AuthorId,
-                Genre = request.Genre,
-                Language = request.Language,
-                Description = request.Description,
-                InStock = request.InStock,
-                Specs = request.Specs
-            };
+            int newId = await _booksRepository.InsertAsync(request, cancellationToken);
 
-            Books created = await _booksRepository.CreateAsync(book);
+            // Read the book back so the response has the computed fields (InStock, AddedAt, Specs).
+            BookOutputModel? created = await _booksRepository.GetByIdAsync(newId, cancellationToken);
 
-            return Ok(new CustomActionResult<Books>
+            return Ok(new CustomActionResult<BookOutputModel>
             {
                 IsSuccess = true,
                 Data = created
@@ -71,34 +60,22 @@ namespace TheMorisakiBookshop.Controllers.Management
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateBook(int id, [FromBody] UpdateBookRequest request)
+        public async Task<IActionResult> UpdateBook(int id, [FromBody] UpdateBookRequestModel request, CancellationToken cancellationToken)
         {
-            Books book = new Books
-            {
-                Title = request.Title,
-                Image = request.Image,
-                Price = request.Price,
-                OldPrice = request.OldPrice,
-                AuthorId = request.AuthorId,
-                Genre = request.Genre,
-                Language = request.Language,
-                Description = request.Description,
-                InStock = request.InStock,
-                Specs = request.Specs
-            };
+            bool found = await _booksRepository.UpdateAsync(id, request, cancellationToken);
 
-            Books? updated = await _booksRepository.UpdateAsync(id, book);
-
-            if (updated == null)
+            if (!found)
             {
-                return Ok(new CustomActionResult<Books>
+                return Ok(new CustomActionResult<BookOutputModel>
                 {
                     IsSuccess = false,
                     Message = $"Book with id {id} not found."
                 });
             }
 
-            return Ok(new CustomActionResult<Books>
+            BookOutputModel? updated = await _booksRepository.GetByIdAsync(id, cancellationToken);
+
+            return Ok(new CustomActionResult<BookOutputModel>
             {
                 IsSuccess = true,
                 Data = updated
@@ -106,9 +83,9 @@ namespace TheMorisakiBookshop.Controllers.Management
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteBook(int id)
+        public async Task<IActionResult> DeleteBook(int id, CancellationToken cancellationToken)
         {
-            bool deleted = await _booksRepository.DeleteAsync(id);
+            bool deleted = await _booksRepository.DeleteAsync(id, cancellationToken);
 
             if (!deleted)
             {

@@ -7,15 +7,20 @@ Onboarding: done (2026-10-07)
 - Routes: `api/[controller]/[action]` from `Controllers/BaseController.cs`; only `[HttpGet]` / `[HttpPost]` used.
 - All endpoints return the `CustomActionResult` envelope (always HTTP 200; 400 validation / 500 error with same shape).
 - Controllers: `Controllers/Shop/` (Books, Authors, Reviews — read only), `Controllers/Management/BooksManagementController.cs` (create/update/delete books, no auth yet).
-- Data today = JSON files in `Data/` (Books, Authors, Reviews) read by `Repositories/Json*Repository.cs` behind `I*Repository` interfaces. In-memory cache + `SemaphoreSlim`, filtering/sorting done with LINQ in C#.
-- Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files (not used by code yet). `Database/Migrations/0001_create_database.sql` (collation `Persian_100_CI_AI`), `0002_create_catalog_tables.sql`, `0003_seed_catalog.sql` written, she ran 0001-0003 on Docker SQL Server (2026-10-12, OK). Procedure scripts `0004`-`0007` written, not run yet.
+- Data = SQL Server via Dapper + stored procedures: `Repositories/BooksRepository.cs`, `AuthorsRepository.cs`, `ReviewsRepository.cs` (concrete classes, `AddScoped` in `Program.cs`, connection string `ConnectionStrings:Bookshop`). Models: `*OutputModel`, `Models/Dto/*RequestModel`. Old `Data/*.json` files still in the repo (unused) until she confirms the DB works.
+- Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files. `Database/Migrations/0001_create_database.sql` (collation `Persian_100_CI_AI`), `0002_create_catalog_tables.sql`, `0003_seed_catalog.sql` written, she ran 0001-0003 on Docker SQL Server (2026-10-12, OK). She ran procedure scripts `0004`-`0007` (2026-10-12, OK).
 - CORS origins from `Cors:AllowedOrigins` (Development: `http://localhost:4200`).
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: tasks 1-4 done in code/scripts. Waiting for her to run 0004-0007. Next: task 5 (Dapper repositories) + task 6 (renames). `Stock` vs `InStock` decided (Stock).
+- Phase 0: tasks 1-6 done in code (build ok, not yet tested against the real DB). Next: she runs the API against Docker SQL Server and checks the endpoints; then delete `Data/*.json` + csproj item. Then task 7 (UI) / phase 1.
 
 ## Session log
+### 2026-10-12 — Tasks 5+6: Dapper repositories + renames (web session, branch `claude/friendly-pascal-icidjv`)
+- Did: she ran 0004-0007 OK. Replaced JSON repos + interfaces with `BooksRepository` / `AuthorsRepository` / `ReviewsRepository` (Dapper, stored procedures, `CancellationToken`); models renamed to `*OutputModel`; `BookRequests.cs` split into `CreateBookRequestModel` / `UpdateBookRequestModel` (+ `BookSpecRequestModel`); controllers take `CancellationToken`, `SearchBooks` uses `List<string>`; `ReviewsController` no longer needs the books repository (`Reviews_GetByAuthorId`). Specs loaded for every book list through `BookSpecs_GetByBookIds` (one extra call per list).
+- Also: `Price`/`OldPrice` are numbers, books carry `Stock` + `InStock`; create/update take `stock`. Logged in BACKLOG "For the UI repo".
+- Verified: `dotnet build` 0 warnings; app starts, DI resolves, DB error becomes the 500 envelope. NOT verified against a real database (none here) — she runs the API and reports errors.
+- Next: she tests endpoints; then delete `Data/*.json`.
 ### 2026-10-12 — Task 4: stored procedures (web session, branch `claude/nifty-lovelace-e9tc1j`)
 - Did: she ran 0001-0003 OK; wrote `0004_authors_procedures.sql`, `0005_book_specs_procedures.sql`, `0006_books_procedures.sql` (11 procs incl. Search with genres/languages/sort), `0007_reviews_procedures.sql`. Same behaviour as the JSON repositories (related/similar/featured ordering). No C# changed.
 - Decisions: `Stock` vs `InStock` left to Claude → `Stock` only (final); specs as JSON into Insert/Update; read procs return `Stock`. Logged.
@@ -37,8 +42,3 @@ Onboarding: done (2026-10-07)
 - Result: memory + instruction files only, no app code changed. UI repo memory updated to match.
 - Started implementing: BACKLOG task 1 done (envelope in code, controllers wrapped, `dotnet build` ok, curl-tested). .NET 8 SDK had to be installed in the sandbox via apt (dotnet.microsoft.com is blocked there).
 - Next: task 2.
-### 2026-10-04 — Claude setup (done locally by a helper, not a web session)
-- Did: created `.claude/` (CLAUDE.md, memory, skills `dotnet-simple` + `sql-server-dapper`, Stop hook), `Database/Migrations/README.md`.
-- Also: basic rules from helper's own .NET skill added to `dotnet-simple` / `sql-server-dapper` (model suffixes, `CancellationToken`, `List<T>`, empty lists). Existing code not renamed yet → BACKLOG task 6. Added `CustomActionResult` envelope rules to `dotnet-simple` (needed by the UI's `ApiResponse<T>`); not in code yet → BACKLOG task 1.
-- Result: setup only, no app code changed.
-- Next: onboarding, then backlog item 1.
