@@ -112,6 +112,18 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetSearchFilters(CancellationToken cancellationToken)
+        {
+            BookFiltersOutputModel filters = await _booksRepository.GetFiltersAsync(cancellationToken);
+
+            return Ok(new CustomActionResult<BookFiltersOutputModel>
+            {
+                IsSuccess = true,
+                Data = filters
+            });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> SearchBooks(string? q, [FromQuery] List<string> genres, [FromQuery] List<string> languages, int? authorId, decimal? minPrice, decimal? maxPrice, string? sort, bool inStockOnly, CancellationToken cancellationToken, int page = 1, int pageSize = 9)
         {
             BookSearchOutputModel results = await _booksRepository.SearchAsync(q, genres, languages, authorId, minPrice, maxPrice, inStockOnly, sort, page, pageSize, cancellationToken);
