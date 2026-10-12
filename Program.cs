@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TheMorisakiBookshop.Middleware;
 using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Repositories;
 
@@ -57,20 +58,9 @@ namespace TheMorisakiBookshop
 
             var app = builder.Build();
 
-            // Unexpected exceptions become a 500 with the standard envelope (also in
-            // Development, so the Angular app sees the same shape everywhere).
-            app.UseExceptionHandler(handler =>
-            {
-                handler.Run(async context =>
-                {
-                    CustomActionResult result = new CustomActionResult();
-                    result.IsSuccess = false;
-                    result.Message = "An unexpected error occurred.";
-
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    await context.Response.WriteAsJsonAsync(result);
-                });
-            });
+            // First in the pipeline, so it catches exceptions from everything after it.
+            // Logs the exception and answers 500 with the standard envelope.
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {

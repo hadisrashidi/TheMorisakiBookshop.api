@@ -6,7 +6,7 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-5. Delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj — only after she confirms the DB-backed API works (repositories already replaced, 2026-10-12).
+5. Delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj — she confirmed the DB-backed API works (2026-10-12) — ask before deleting.
 7. UI side of phase 0 (UI repo): `ApiHelperService` base pieces + align API URL → see UI BACKLOG tasks 1-2.
 
 ### Phase 1 — Good catalog

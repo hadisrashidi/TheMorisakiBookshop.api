@@ -13,15 +13,18 @@ Onboarding: done (2026-10-07)
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: tasks 1-6 done in code (build ok, not yet tested against the real DB). Next: she runs the API against Docker SQL Server and checks the endpoints; then delete `Data/*.json` + csproj item. Then task 7 (UI) / phase 1.
+- Phase 0: tasks 1-6 done and confirmed working by her (2026-10-12: UI shows books from SQL Server through the API). Next: delete `Data/*.json` + csproj item (waiting for her OK), then phase 1. Then task 7 (UI) / phase 1.
 
 ## Session log
 ### 2026-10-12 — Tasks 5+6: Dapper repositories + renames (web session, branch `claude/friendly-pascal-icidjv`)
 - Did: she ran 0004-0007 OK. Replaced JSON repos + interfaces with `BooksRepository` / `AuthorsRepository` / `ReviewsRepository` (Dapper, stored procedures, `CancellationToken`); models renamed to `*OutputModel`; `BookRequests.cs` split into `CreateBookRequestModel` / `UpdateBookRequestModel` (+ `BookSpecRequestModel`); controllers take `CancellationToken`, `SearchBooks` uses `List<string>`; `ReviewsController` no longer needs the books repository (`Reviews_GetByAuthorId`). Specs loaded for every book list through `BookSpecs_GetByBookIds` (one extra call per list).
 - Also: `Price`/`OldPrice` are numbers, books carry `Stock` + `InStock`; create/update take `stock`. Logged in BACKLOG "For the UI repo".
 - Verified: `dotnet build` 0 warnings; app starts, DI resolves, DB error becomes the 500 envelope. NOT verified against a real database (none here) — she runs the API and reports errors.
-- Next: she tests endpoints; then delete `Data/*.json`.
+- Confirmed by her 2026-10-12: everything works end to end (UI + API + SQL Server).
+- Next: delete `Data/*.json` (ask her), then phase 1.
 - Follow-up: UI got 500 on every call — her Docker maps host port 3698 to 1433, connection string said `localhost,1433` → changed to `localhost,3698` in both appsettings. Also warned: her SSMS tab was on `master` (scripts 0002-0007 may have run there; she checks `MorisakiBookshop.sys.procedures`), and port 3698 may be exposed publicly + `sa` password shared in chat → rotate, bind to 127.0.0.1.
+- Follow-up 2: `Middleware/ExceptionHandlingMiddleware.cs` replaces `UseExceptionHandler` (logs + 500 envelope, Development adds exception message to `errors`); rule "new SQL scripts start with `USE MorisakiBookshop;` + `GO`" added to skill/README/DECISIONS. Verified: build ok, run without DB shows the SqlException in `errors` and the `fail:` log line.
+- Found: UI shows no books because UI `*.api.service.ts` still expect raw JSON, API now sends the envelope (UI BACKLOG tasks 1 + 3) and `price` is a number now. Not fixed yet — asked her.
 ### 2026-10-12 — Task 4: stored procedures (web session, branch `claude/nifty-lovelace-e9tc1j`)
 - Did: she ran 0001-0003 OK; wrote `0004_authors_procedures.sql`, `0005_book_specs_procedures.sql`, `0006_books_procedures.sql` (11 procs incl. Search with genres/languages/sort), `0007_reviews_procedures.sql`. Same behaviour as the JSON repositories (related/similar/featured ordering). No C# changed.
 - Decisions: `Stock` vs `InStock` left to Claude → `Stock` only (final); specs as JSON into Insert/Update; read procs return `Stock`. Logged.
