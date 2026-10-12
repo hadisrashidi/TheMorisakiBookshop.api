@@ -31,12 +31,15 @@ Column = SP parameter = C# property name (`Title` ↔ `@Title` ↔ `BookOutputMo
 - **Never edit a script that was already delivered.** Any change = a new file. To change a stored
   procedure, the new file contains the full `CREATE OR ALTER PROCEDURE`.
 - One topic per file (one table, or the procedures of one table). Separate batches with `GO`.
-- No `USE` statement — she picks the database in SSMS.
+- **First line of every script (from 0008 on): `USE MorisakiBookshop;` followed by `GO`**, then the header comment. Her rule (2026-10-12): scripts must never land in `master` by accident. Exception: `0001_create_database.sql` (it creates the database). Delivered scripts 0002-0007 are not edited.
 - After writing a script: add it to `.claude/memory/BACKLOG.md` → "SQL to run", and tell her in chat.
 - Never put real secrets or personal data in scripts.
 
-Header for every file:
+Start of every file:
 ```sql
+USE MorisakiBookshop;
+GO
+
 -- 0002_create_books_table.sql
 -- Creates dbo.Books and its foreign key to dbo.Authors.
 -- Safe to run more than once.

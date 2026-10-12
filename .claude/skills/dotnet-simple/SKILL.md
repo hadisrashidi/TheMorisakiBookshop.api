@@ -20,6 +20,7 @@ Models/<Name>OutputModel.cs          shape of a row returned by a stored procedu
 Models/Dto/<Name>RequestModel.cs     shape of a request body (with validation attributes)
 Repositories/<Table>Repository.cs    calls stored procedures with Dapper (skill sql-server-dapper)
 Database/Migrations/NNNN_*.sql       SQL scripts (skill sql-server-dapper)
+Middleware/ExceptionHandlingMiddleware.cs   global error handling (500 + envelope)
 Program.cs                           service registration + middleware
 ```
 
@@ -120,7 +121,7 @@ Rules:
 - Repositories return plain models (`BookOutputModel?`, `List<BookOutputModel>`); only controllers create envelopes.
 - Non-200 only from the framework, and with the same envelope body:
   - 400 — validation failed (`[Required]` etc.): `Errors` = the validation messages (configured once in Program.cs, below).
-  - 500 — unexpected exception: `Message = "An unexpected error occurred."` (global exception handler in Program.cs).
+  - 500 — unexpected exception: `Message = "An unexpected error occurred."` (`Middleware/ExceptionHandlingMiddleware.cs`, registered first in Program.cs: logs the exception, answers 500 + envelope; in Development `errors` also carries the exception type and message).
 
 Program.cs setup (lambdas are allowed here because the framework API requires them):
 ```csharp
@@ -147,18 +148,8 @@ builder.Services.AddControllers()
     });
 ```
 ```csharp
-app.UseExceptionHandler(handler =>
-{
-    handler.Run(async context =>
-    {
-        CustomActionResult result = new CustomActionResult();
-        result.IsSuccess = false;
-        result.Message = "An unexpected error occurred.";
-
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await context.Response.WriteAsJsonAsync(result);
-    });
-});
+// first middleware: catches every unhandled exception, logs it, answers 500 with the envelope
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 ```
 (needs `using Microsoft.AspNetCore.Mvc;`, `using Microsoft.AspNetCore.Mvc.ModelBinding;`, `using TheMorisakiBookshop.Models;`)
 
