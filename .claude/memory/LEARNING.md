@@ -16,4 +16,6 @@
 - `TOP (@Count)` + `ORDER BY` = `.slice(0, n)` after sorting; `CASE WHEN ... THEN 0 ELSE 1 END` inside `ORDER BY` puts the matching rows first.
 - `STRING_SPLIT(@Text, N',')` turns comma text into rows; `OPENJSON(@Json)` turns a JSON array into rows (like `JSON.parse` + iterate), `[key]` is the array index.
 - `BEGIN TRANSACTION ... COMMIT` + `SET XACT_ABORT ON` = all statements succeed or none do (any error rolls everything back).
-
+- `using (SqlConnection connection = new ...) { }` = the connection is closed automatically when the block ends, like `finalize()` / unsubscribing in Angular. `DynamicParameters` = the `@Name` arguments sent to the procedure; `CommandDefinition` = procedure name + arguments + cancellation token in one object; `QueryAsync<T>` = run it and map every row to a `T` (column name = property name).
+- `Dictionary<int, BookOutputModel>` = TypeScript `Record<number, Book>` / `Map`; used to put each spec on its book without nested searching.
+- `AddScoped<BooksRepository>()` = `providers: [BooksRepository]` for one HTTP request; the controller constructor asks for it and ASP.NET injects it (like `inject()`).

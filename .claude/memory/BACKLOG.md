@@ -6,11 +6,7 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-5. (`Stock` decided 2026-10-12: create/update request models carry `Stock`, not `InStock`.) Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
-6. Bring existing code to skill `dotnet-simple` naming (best done together with task 5):
-   - Split `Models/Dto/BookRequests.cs` into `CreateBookRequestModel.cs` and `UpdateBookRequestModel.cs`.
-   - Rename `Books` → `BookOutputModel`, `Authors` → `AuthorOutputModel`, `Review` → `ReviewOutputModel`, `BookSpec` → `BookSpecOutputModel`. JSON shape for the UI does not change (property names stay).
-   - Add `CancellationToken cancellationToken` to all controller actions and repository methods; `string[]` query params in `SearchBooks` → `List<string>`.
+5. Delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj — only after she confirms the DB-backed API works (repositories already replaced, 2026-10-12).
 7. UI side of phase 0 (UI repo): `ApiHelperService` base pieces + align API URL → see UI BACKLOG tasks 1-2.
 
 ### Phase 1 — Good catalog
@@ -45,17 +41,16 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0004_authors_procedures.sql` — `Authors_GetAll`, `_GetById`, `_GetSimilar`; run against `MorisakiBookshop`.
-- `Database/Migrations/0005_book_specs_procedures.sql` — `BookSpecs_GetByBookId`, `_GetByBookIds`.
-- `Database/Migrations/0006_books_procedures.sql` — all `Books_*` procedures (needs 0002 + 0003 already run).
-- `Database/Migrations/0007_reviews_procedures.sql` — `Reviews_GetByBookId`, `_GetByAuthorId`.
+- (none)
 
 ## For the UI repo
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (DONE in API 2026-10-07) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape. Create/update/delete in `BooksManagement` also answer 200 + envelope (create no longer returns 201 + Location; delete no longer 204).
 - UI `public/env/env.js` points to `https://localhost:44388/api/`, but `Properties/launchSettings.json` uses `https://localhost:7106` / `http://localhost:5074` — align one of them.
-- (after tasks 4-5) Book responses carry `stock` (number) and `inStock` (computed from `Stock > 0`); create/update book requests send `stock` instead of `inStock` (no `InStock` column); `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
+- (DONE in API 2026-10-12) Book responses carry `stock` (number) and `inStock` (computed from `Stock > 0`); create/update book requests send `stock` instead of `inStock` (no `InStock` column); `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
 - (planned, phases 2-4) New endpoint groups will appear: auth (OTP, email+password), profile/addresses, cart, orders, payment. Contracts are written here when each task is designed.
+
+- (DONE in API 2026-10-12) `GET Books/SearchBooks`: `inStockOnly` is a plain bool; `genres` / `languages` repeat in the query (`?genres=a&genres=b`). Book `specs` still `[{ label, value }]`. `Price`/`OldPrice` JSON numbers, `oldPrice` is `null` (not "") when there is no discount. Review `date` stays Jalali text.
 
 ## Questions for her
 - Payment gateway choice and its production requirements (task 18).

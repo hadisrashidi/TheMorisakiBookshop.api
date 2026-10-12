@@ -8,19 +8,19 @@ namespace TheMorisakiBookshop.Controllers.Shop
     {
         private const int SimilarAuthorsCount = 6;
 
-        private readonly IAuthorsRepository _authorsRepository;
+        private readonly AuthorsRepository _authorsRepository;
 
-        public AuthorsController(IAuthorsRepository authorsRepository)
+        public AuthorsController(AuthorsRepository authorsRepository)
         {
             _authorsRepository = authorsRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAuthors()
+        public async Task<IActionResult> GetAllAuthors(CancellationToken cancellationToken)
         {
-            List<Authors> authors = await _authorsRepository.GetAllAsync();
+            List<AuthorOutputModel> authors = await _authorsRepository.GetAllAsync(cancellationToken);
 
-            return Ok(new CustomActionResult<List<Authors>>
+            return Ok(new CustomActionResult<List<AuthorOutputModel>>
             {
                 IsSuccess = true,
                 Data = authors
@@ -28,20 +28,20 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAuthorById(int id)
+        public async Task<IActionResult> GetAuthorById(int id, CancellationToken cancellationToken)
         {
-            Authors? author = await _authorsRepository.GetByIdAsync(id);
+            AuthorOutputModel? author = await _authorsRepository.GetByIdAsync(id, cancellationToken);
 
             if (author == null)
             {
-                return Ok(new CustomActionResult<Authors>
+                return Ok(new CustomActionResult<AuthorOutputModel>
                 {
                     IsSuccess = false,
                     Message = $"Author with id {id} not found."
                 });
             }
 
-            return Ok(new CustomActionResult<Authors>
+            return Ok(new CustomActionResult<AuthorOutputModel>
             {
                 IsSuccess = true,
                 Data = author
@@ -49,11 +49,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSimilarAuthors(int id)
+        public async Task<IActionResult> GetSimilarAuthors(int id, CancellationToken cancellationToken)
         {
-            List<Authors> similar = await _authorsRepository.GetSimilarAsync(id, SimilarAuthorsCount);
+            List<AuthorOutputModel> similar = await _authorsRepository.GetSimilarAsync(id, SimilarAuthorsCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Authors>>
+            return Ok(new CustomActionResult<List<AuthorOutputModel>>
             {
                 IsSuccess = true,
                 Data = similar

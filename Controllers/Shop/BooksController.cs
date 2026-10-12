@@ -11,19 +11,19 @@ namespace TheMorisakiBookshop.Controllers.Shop
         private const int RelatedBooksCount = 3;
         private const int SimilarBooksCount = 4;
 
-        private readonly IBooksRepository _booksRepository;
+        private readonly BooksRepository _booksRepository;
 
-        public BooksController(IBooksRepository booksRepository)
+        public BooksController(BooksRepository booksRepository)
         {
             _booksRepository = booksRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks(CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetAllAsync();
+            List<BookOutputModel> books = await _booksRepository.GetAllAsync(cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -31,11 +31,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNewBooks()
+        public async Task<IActionResult> GetNewBooks(CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetNewestAsync(NewBooksCount);
+            List<BookOutputModel> books = await _booksRepository.GetNewestAsync(NewBooksCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -43,11 +43,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFeaturedBooks()
+        public async Task<IActionResult> GetFeaturedBooks(CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetFeaturedAsync(FeaturedBooksCount);
+            List<BookOutputModel> books = await _booksRepository.GetFeaturedAsync(FeaturedBooksCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -55,20 +55,20 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBookById(int id)
+        public async Task<IActionResult> GetBookById(int id, CancellationToken cancellationToken)
         {
-            Books? book = await _booksRepository.GetByIdAsync(id);
+            BookOutputModel? book = await _booksRepository.GetByIdAsync(id, cancellationToken);
 
             if (book == null)
             {
-                return Ok(new CustomActionResult<Books>
+                return Ok(new CustomActionResult<BookOutputModel>
                 {
                     IsSuccess = false,
                     Message = $"Book with id {id} not found."
                 });
             }
 
-            return Ok(new CustomActionResult<Books>
+            return Ok(new CustomActionResult<BookOutputModel>
             {
                 IsSuccess = true,
                 Data = book
@@ -76,11 +76,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRelatedBooks(int id)
+        public async Task<IActionResult> GetRelatedBooks(int id, CancellationToken cancellationToken)
         {
-            List<Books> related = await _booksRepository.GetRelatedAsync(id, RelatedBooksCount);
+            List<BookOutputModel> related = await _booksRepository.GetRelatedAsync(id, RelatedBooksCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = related
@@ -88,11 +88,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSimilarBooks(int id)
+        public async Task<IActionResult> GetSimilarBooks(int id, CancellationToken cancellationToken)
         {
-            List<Books> similar = await _booksRepository.GetSimilarAsync(id, SimilarBooksCount);
+            List<BookOutputModel> similar = await _booksRepository.GetSimilarAsync(id, SimilarBooksCount, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = similar
@@ -100,11 +100,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBooksByAuthor(int authorId)
+        public async Task<IActionResult> GetBooksByAuthor(int authorId, CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetByAuthorAsync(authorId);
+            List<BookOutputModel> books = await _booksRepository.GetByAuthorAsync(authorId, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = books
@@ -112,11 +112,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchBooks(string? q, [FromQuery] string[]? genres, [FromQuery] string[]? languages, string? sort, bool? inStockOnly)
+        public async Task<IActionResult> SearchBooks(string? q, [FromQuery] List<string> genres, [FromQuery] List<string> languages, string? sort, bool inStockOnly, CancellationToken cancellationToken)
         {
-            List<Books> results = await _booksRepository.SearchAsync(q, genres, languages, sort, inStockOnly);
+            List<BookOutputModel> results = await _booksRepository.SearchAsync(q, genres, languages, sort, inStockOnly, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Books>>
+            return Ok(new CustomActionResult<List<BookOutputModel>>
             {
                 IsSuccess = true,
                 Data = results

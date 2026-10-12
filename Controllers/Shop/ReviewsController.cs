@@ -6,21 +6,19 @@ namespace TheMorisakiBookshop.Controllers.Shop
 {
     public class ReviewsController : BaseController
     {
-        private readonly IReviewsRepository _reviewsRepository;
-        private readonly IBooksRepository _booksRepository;
+        private readonly ReviewsRepository _reviewsRepository;
 
-        public ReviewsController(IReviewsRepository reviewsRepository, IBooksRepository booksRepository)
+        public ReviewsController(ReviewsRepository reviewsRepository)
         {
             _reviewsRepository = reviewsRepository;
-            _booksRepository = booksRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetByBookId(int bookId)
+        public async Task<IActionResult> GetByBookId(int bookId, CancellationToken cancellationToken)
         {
-            List<Review> reviews = await _reviewsRepository.GetByBookIdAsync(bookId);
+            List<ReviewOutputModel> reviews = await _reviewsRepository.GetByBookIdAsync(bookId, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Review>>
+            return Ok(new CustomActionResult<List<ReviewOutputModel>>
             {
                 IsSuccess = true,
                 Data = reviews
@@ -28,12 +26,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetByAuthorId(int authorId)
+        public async Task<IActionResult> GetByAuthorId(int authorId, CancellationToken cancellationToken)
         {
-            List<Books> books = await _booksRepository.GetByAuthorAsync(authorId);
-            List<Review> reviews = await _reviewsRepository.GetByBookIdsAsync(books.Select(b => b.Id));
+            List<ReviewOutputModel> reviews = await _reviewsRepository.GetByAuthorIdAsync(authorId, cancellationToken);
 
-            return Ok(new CustomActionResult<List<Review>>
+            return Ok(new CustomActionResult<List<ReviewOutputModel>>
             {
                 IsSuccess = true,
                 Data = reviews

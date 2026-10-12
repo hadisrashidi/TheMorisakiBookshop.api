@@ -35,9 +35,9 @@ namespace TheMorisakiBookshop
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<IBooksRepository, JsonBooksRepository>();
-            builder.Services.AddSingleton<IAuthorsRepository, JsonAuthorsRepository>();
-            builder.Services.AddSingleton<IReviewsRepository, JsonReviewsRepository>();
+            builder.Services.AddScoped<BooksRepository>();
+            builder.Services.AddScoped<AuthorsRepository>();
+            builder.Services.AddScoped<ReviewsRepository>();
 
             // "AllowedOrigins" comes from appsettings — falls back to the
             // Angular dev server if nothing is configured, rather than
@@ -89,4 +89,4 @@ namespace TheMorisakiBookshop
             app.Run();
         }
     }
-}
+}
