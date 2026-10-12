@@ -13,12 +13,12 @@ Onboarding: done (2026-10-07)
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: tasks 1-4 done in code/scripts. Waiting for her to run 0004-0007. Next: task 5 (Dapper repositories) + task 6 (renames) — needs her OK on `Stock` vs `InStock`.
+- Phase 0: tasks 1-4 done in code/scripts. Waiting for her to run 0004-0007. Next: task 5 (Dapper repositories) + task 6 (renames). `Stock` vs `InStock` decided (Stock).
 
 ## Session log
 ### 2026-10-12 — Task 4: stored procedures (web session, branch `claude/nifty-lovelace-e9tc1j`)
 - Did: she ran 0001-0003 OK; wrote `0004_authors_procedures.sql`, `0005_book_specs_procedures.sql`, `0006_books_procedures.sql` (11 procs incl. Search with genres/languages/sort), `0007_reviews_procedures.sql`. Same behaviour as the JSON repositories (related/similar/featured ordering). No C# changed.
-- Decisions: `InStock` question postponed by her; specs as JSON into Insert/Update; read procs return `Stock`. Logged.
+- Decisions: `Stock` vs `InStock` left to Claude → `Stock` only (final); specs as JSON into Insert/Update; read procs return `Stock`. Logged.
 - Not verified: scripts never run (no SQL Server here) — she runs 0004-0007 and reports errors.
 - Next: task 5 + 6.
 ### 2026-10-12 — Task 3: catalog tables + seed (web session, branch `claude/eager-hawking-eaaako`)

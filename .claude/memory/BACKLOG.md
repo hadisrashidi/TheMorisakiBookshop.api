@@ -6,7 +6,7 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-5. (Needs her OK first: `Stock` vs `InStock`, DECISIONS 2026-10-12. Create/update request models carry `Stock` if accepted.) Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
+5. (`Stock` decided 2026-10-12: create/update request models carry `Stock`, not `InStock`.) Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
 6. Bring existing code to skill `dotnet-simple` naming (best done together with task 5):
    - Split `Models/Dto/BookRequests.cs` into `CreateBookRequestModel.cs` and `UpdateBookRequestModel.cs`.
    - Rename `Books` → `BookOutputModel`, `Authors` → `AuthorOutputModel`, `Review` → `ReviewOutputModel`, `BookSpec` → `BookSpecOutputModel`. JSON shape for the UI does not change (property names stay).
@@ -54,7 +54,7 @@
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (DONE in API 2026-10-07) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape. Create/update/delete in `BooksManagement` also answer 200 + envelope (create no longer returns 201 + Location; delete no longer 204).
 - UI `public/env/env.js` points to `https://localhost:44388/api/`, but `Properties/launchSettings.json` uses `https://localhost:7106` / `http://localhost:5074` — align one of them.
-- (after tasks 4-5) `InStock` stays in the JSON but is computed from `Stock > 0` (no `InStock` column); `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
+- (after tasks 4-5) Book responses carry `stock` (number) and `inStock` (computed from `Stock > 0`); create/update book requests send `stock` instead of `inStock` (no `InStock` column); `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
 - (planned, phases 2-4) New endpoint groups will appear: auth (OTP, email+password), profile/addresses, cart, orders, payment. Contracts are written here when each task is designed.
 
 ## Questions for her
