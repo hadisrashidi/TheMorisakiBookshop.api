@@ -6,9 +6,7 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-2. (code DONE 2026-10-11: packages `Dapper` 2.1.89 + `Microsoft.Data.SqlClient` 7.1.1, `ConnectionStrings:Bookshop` in both appsettings files, localhost,1433 / `sa` / `Morisaki_Local_2026!`.) Left for her: start the Docker container with that password and run `0001_create_database.sql`; then tell me the connection works (I verify with the first repository, task 5). She may change port/password later — then edit both appsettings files.
-4. Migration: stored procedures (`InStock` = `Stock > 0` computed in the SELECT; `Specs` ordered by `SortOrder`) for every current repository method (Books: GetAll, GetById, GetNewest, GetFeatured, GetRelated, GetSimilar, GetByAuthor, Search, Insert, Update, Delete; Authors; Reviews: GetByBookId, GetByAuthorId).
-5. Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
+5. (Needs her OK first: `Stock` vs `InStock`, DECISIONS 2026-10-12. Create/update request models carry `Stock` if accepted.) Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
 6. Bring existing code to skill `dotnet-simple` naming (best done together with task 5):
    - Split `Models/Dto/BookRequests.cs` into `CreateBookRequestModel.cs` and `UpdateBookRequestModel.cs`.
    - Rename `Books` → `BookOutputModel`, `Authors` → `AuthorOutputModel`, `Review` → `ReviewOutputModel`, `BookSpec` → `BookSpecOutputModel`. JSON shape for the UI does not change (property names stay).
@@ -47,11 +45,10 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-<!-- scripts she still has to execute locally, in this order. Remove a line when she confirms. -->
-- `Database/Migrations/0001_create_database.sql` — creates `MorisakiBookshop` with collation `Persian_100_CI_AI`; run while connected to `master`.
-
-- `Database/Migrations/0002_create_catalog_tables.sql` — tables `Authors`, `Books`, `BookSpecs`, `Reviews`; run against `MorisakiBookshop`.
-- `Database/Migrations/0003_seed_catalog.sql` — copies `Data/*.json` into those tables (same Ids); run after 0002.
+- `Database/Migrations/0004_authors_procedures.sql` — `Authors_GetAll`, `_GetById`, `_GetSimilar`; run against `MorisakiBookshop`.
+- `Database/Migrations/0005_book_specs_procedures.sql` — `BookSpecs_GetByBookId`, `_GetByBookIds`.
+- `Database/Migrations/0006_books_procedures.sql` — all `Books_*` procedures (needs 0002 + 0003 already run).
+- `Database/Migrations/0007_reviews_procedures.sql` — `Reviews_GetByBookId`, `_GetByAuthorId`.
 
 ## For the UI repo
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->

@@ -1,4 +1,6 @@
 # Done
+2026-10-12: Task 4 — stored procedure scripts 0004-0007 written (Authors, BookSpecs, Books, Reviews).
+2026-10-12: Task 2 — she started Docker SQL Server and ran 0001-0003 successfully.
 <!-- newest on top: YYYY-MM-DD: task -->
 
 - 2026-10-12: Task 3 — `0002_create_catalog_tables.sql` + `0003_seed_catalog.sql` written (not yet run by her).
