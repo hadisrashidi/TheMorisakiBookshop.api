@@ -2,6 +2,7 @@
 2026-10-12: Task 4 — stored procedure scripts 0004-0007 written (Authors, BookSpecs, Books, Reviews).
 2026-10-12: Task 2 — she started Docker SQL Server and ran 0001-0003 successfully.
 <!-- newest on top: YYYY-MM-DD: task -->
+2026-10-12: Task 8b — `Books_GetFilters` + `GET Books/GetSearchFilters` (script 0009); UI search uses it. She ran 0008 OK.
 2026-10-12: Task 10 — UI page audit, findings in UI BACKLOG tasks 9-14.
 2026-10-12: Task 9 — book/author details, related/similar, reviews are served from SQL Server (done with tasks 4-6).
 2026-10-12: Task 8 — `Books_Search` with author/price filters, paging and total count (script 0008, `BookSearchOutputModel`); facets left as 8b.

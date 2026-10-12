@@ -220,6 +220,31 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        public async Task<BookFiltersOutputModel> GetFiltersAsync(CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Books_GetFilters",
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                // Three result sets, read in the order the procedure selects them: prices, genres, languages.
+                using (SqlMapper.GridReader reader = await connection.QueryMultipleAsync(command))
+                {
+                    BookFiltersOutputModel filters = await reader.ReadSingleAsync<BookFiltersOutputModel>();
+
+                    IEnumerable<string> genres = await reader.ReadAsync<string>();
+                    filters.Genres = genres.ToList();
+
+                    IEnumerable<string> languages = await reader.ReadAsync<string>();
+                    filters.Languages = languages.ToList();
+
+                    return filters;
+                }
+            }
+        }
+
         // Returns the new Id. Specs travel as JSON text; the procedure saves book + specs in one transaction.
         public async Task<int> InsertAsync(CreateBookRequestModel request, CancellationToken cancellationToken)
         {

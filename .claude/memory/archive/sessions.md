@@ -1,5 +1,9 @@
 # Archived sessions
 <!-- newest on top -->
+### 2026-10-11 — Task 2: packages, connection string, create-database script (web session, branch `claude/practical-pascal-zuq4fk`)
+- Did: she merged the previous PR; added `Dapper` + `Microsoft.Data.SqlClient`; `ConnectionStrings:Bookshop` in `appsettings.json` and `appsettings.Development.json` (localhost,3698, `sa`, local throwaway password); `Database/Migrations/0001_create_database.sql` (`Persian_100_CI_AI`); updated migrations README. `dotnet build` ok (SDK re-installed via apt).
+- Decisions: logged (password in both appsettings, collation, packages).
+- Next: she starts Docker + runs 0001; then task 3.
 ### 2026-10-07 — Onboarding, planning, envelope (web session, both repos on branch `claude/magical-wozniak-j0qmxf`)
 - Did: onboarding done; she told the project story and scope; agreed roadmap phases 0-6 → BACKLOG tasks 1-26; decisions logged (goal, login OTP + email/password, transactional orders, roadmap).
 - Also: DB = SQL Server in Docker (`sa`, local password in appsettings.Development.json), prices `DECIMAL(18,0)`, guest cart in browser; updated CLAUDE.md, ONBOARDING.md, skill `sql-server-dapper` connection string accordingly.

@@ -10,7 +10,6 @@
 7. UI side of phase 0 (UI repo): `ApiHelperService` base pieces + align API URL → see UI BACKLOG tasks 1-2.
 
 ### Phase 1 — Good catalog
-- Remaining: facets endpoint (distinct genres/languages, min/max price) so the UI filters stop using hand-typed lists — task 8b.
 
 ### Phase 2 — Accounts
 11. Login with **mobile + OTP (SMS)** first. Decide with her before coding: SMS provider, OTP rules (length, expiry, resend limit, rate limit), JWT lifetime, new NuGet packages (JWT bearer).
@@ -39,9 +38,10 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0008_books_search_paging.sql` — new `dbo.Books_Search` (author, price range, paging, total count). Run it BEFORE starting the API, otherwise search returns a 500.
+- `Database/Migrations/0009_books_filters_procedure.sql` — new `dbo.Books_GetFilters` (distinct genres/languages, price range). Run it BEFORE using the new search page.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-12) `GET Books/GetSearchFilters` → `data = { minPrice, maxPrice, genres[], languages[] }`.
 - (DONE in API + UI 2026-10-12) `GET Books/SearchBooks` returns `data = { items, totalCount, page, pageSize }` instead of a plain list. New query params: `page` (default 1), `pageSize` (default 9, clamped 1-50 in SQL), `authorId`, `minPrice`, `maxPrice`. Still: `q`, `genres`, `languages`, `inStockOnly`, `sort`.
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (DONE in API 2026-10-07) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape. Create/update/delete in `BooksManagement` also answer 200 + envelope (create no longer returns 201 + Location; delete no longer 204).
