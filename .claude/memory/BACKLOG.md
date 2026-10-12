@@ -10,9 +10,7 @@
 7. UI side of phase 0 (UI repo): `ApiHelperService` base pieces + align API URL → see UI BACKLOG tasks 1-2.
 
 ### Phase 1 — Good catalog
-8. Real search: `dbo.Books_Search` with text, author, category, price range, in-stock filter, sort and paging — all in the stored procedure. Response carries total count for paging.
-9. Book details (specs, reviews, stock state) and author details (bio, books) served from the DB; "similar books" and "related" via stored procedures.
-10. Audit the UI first: which pages/components (header, footer, home, search, details, similar) are real and which are placeholders → write the findings into UI BACKLOG.
+- Remaining: facets endpoint (distinct genres/languages, min/max price) so the UI filters stop using hand-typed lists — task 8b.
 
 ### Phase 2 — Accounts
 11. Login with **mobile + OTP (SMS)** first. Decide with her before coding: SMS provider, OTP rules (length, expiry, resend limit, rate limit), JWT lifetime, new NuGet packages (JWT bearer).
@@ -41,9 +39,10 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none)
+- `Database/Migrations/0008_books_search_paging.sql` — new `dbo.Books_Search` (author, price range, paging, total count). Run it BEFORE starting the API, otherwise search returns a 500.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-12) `GET Books/SearchBooks` returns `data = { items, totalCount, page, pageSize }` instead of a plain list. New query params: `page` (default 1), `pageSize` (default 9, clamped 1-50 in SQL), `authorId`, `minPrice`, `maxPrice`. Still: `q`, `genres`, `languages`, `inStockOnly`, `sort`.
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (DONE in API 2026-10-07) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape. Create/update/delete in `BooksManagement` also answer 200 + envelope (create no longer returns 201 + Location; delete no longer 204).
 - UI `public/env/env.js` points to `https://localhost:44388/api/`, but `Properties/launchSettings.json` uses `https://localhost:7106` / `http://localhost:5074` — align one of them.

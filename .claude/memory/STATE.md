@@ -13,9 +13,13 @@ Onboarding: done (2026-10-07)
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: tasks 1-6 done and confirmed working by her (2026-10-12: UI shows books from SQL Server through the API). Next: delete `Data/*.json` + csproj item (waiting for her OK), then phase 1. Then task 7 (UI) / phase 1.
+- Phase 0: tasks 1-6 done and confirmed (2026-10-12). Phase 1: search paging written (script 0008 waiting for her), UI audit done. Next: delete `Data/*.json` (waiting for her OK), facets (8b), then phase 2.
 
 ## Session log
+### 2026-10-12 — Task 10 audit + Task 8 search paging (web session, branch `claude/vibrant-dijkstra-3beh1b`, both repos)
+- Did: audited the UI (findings in UI BACKLOG 9-14: fake auth incl. unverified password reset, fake checkout, footer/FAQ placeholders, hand-typed genre lists). Wrote `0008_books_search_paging.sql`; `BookSearchOutputModel`; `BooksRepository.SearchAsync` uses `QueryMultipleAsync`; `SearchBooks` has `authorId`, `minPrice`, `maxPrice`, `page`, `pageSize`. UI search switched to server paging.
+- Verified: `dotnet build` 0 warnings, UI `npm run build` ok. NOT verified: script 0008 never run (no SQL Server here), nothing tested in a browser.
+- Next: she runs 0008; then facets (8b) + price/author controls in the UI.
 ### 2026-10-12 — Tasks 5+6: Dapper repositories + renames (web session, branch `claude/friendly-pascal-icidjv`)
 - Did: she ran 0004-0007 OK. Replaced JSON repos + interfaces with `BooksRepository` / `AuthorsRepository` / `ReviewsRepository` (Dapper, stored procedures, `CancellationToken`); models renamed to `*OutputModel`; `BookRequests.cs` split into `CreateBookRequestModel` / `UpdateBookRequestModel` (+ `BookSpecRequestModel`); controllers take `CancellationToken`, `SearchBooks` uses `List<string>`; `ReviewsController` no longer needs the books repository (`Reviews_GetByAuthorId`). Specs loaded for every book list through `BookSpecs_GetByBookIds` (one extra call per list).
 - Also: `Price`/`OldPrice` are numbers, books carry `Stock` + `InStock`; create/update take `stock`. Logged in BACKLOG "For the UI repo".
@@ -40,9 +44,3 @@ Onboarding: done (2026-10-07)
 - Did: she merged the previous PR; added `Dapper` + `Microsoft.Data.SqlClient`; `ConnectionStrings:Bookshop` in `appsettings.json` and `appsettings.Development.json` (localhost,3698, `sa`, local throwaway password); `Database/Migrations/0001_create_database.sql` (`Persian_100_CI_AI`); updated migrations README. `dotnet build` ok (SDK re-installed via apt).
 - Decisions: logged (password in both appsettings, collation, packages).
 - Next: she starts Docker + runs 0001; then task 3.
-### 2026-10-07 — Onboarding, planning, envelope (web session, both repos on branch `claude/magical-wozniak-j0qmxf`)
-- Did: onboarding done; she told the project story and scope; agreed roadmap phases 0-6 → BACKLOG tasks 1-26; decisions logged (goal, login OTP + email/password, transactional orders, roadmap).
-- Also: DB = SQL Server in Docker (`sa`, local password in appsettings.Development.json), prices `DECIMAL(18,0)`, guest cart in browser; updated CLAUDE.md, ONBOARDING.md, skill `sql-server-dapper` connection string accordingly.
-- Result: memory + instruction files only, no app code changed. UI repo memory updated to match.
-- Started implementing: BACKLOG task 1 done (envelope in code, controllers wrapped, `dotnet build` ok, curl-tested). .NET 8 SDK had to be installed in the sandbox via apt (dotnet.microsoft.com is blocked there).
-- Next: task 2.
