@@ -9,3 +9,6 @@
 - `ConnectionStrings:Bookshop` in `appsettings.json` = a value in Angular `environment.ts`; `appsettings.Development.json` overrides it in Development (like `environment.development.ts`). Read later with `configuration.GetConnectionString("Bookshop")`.
 - Collation = the rules a database uses to compare/sort text. `CI` = case-insensitive, `AI` = accent-insensitive; `Persian_100` = Persian sorting rules. Set once on the database (`CREATE DATABASE ... COLLATE ...`).
 - Middleware order in `Program.cs` matters (exception handler → Swagger → HTTPS → CORS → authorization → controllers), like the order of Angular interceptors.
+- `IDENTITY(1,1)` = auto-increment Id. `SET IDENTITY_INSERT dbo.X ON` lets a script insert fixed Ids (used by the seed so UI routes keep working).
+- `FOREIGN KEY` = a column that must point to an existing row in another table (`Books.AuthorId` -> `Authors.Id`); `ON DELETE CASCADE` deletes child rows with the parent. `CHECK` = a rule the database enforces on every write (`Stock >= 0`).
+- `GO` separates batches in SSMS scripts; it is not SQL itself. `IF NOT EXISTS ... INSERT` makes a seed re-runnable.

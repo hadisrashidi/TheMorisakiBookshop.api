@@ -7,10 +7,7 @@
 
 ### Phase 0 — Foundation
 2. (code DONE 2026-10-11: packages `Dapper` 2.1.89 + `Microsoft.Data.SqlClient` 7.1.1, `ConnectionStrings:Bookshop` in both appsettings files, localhost,1433 / `sa` / `Morisaki_Local_2026!`.) Left for her: start the Docker container with that password and run `0001_create_database.sql`; then tell me the connection works (I verify with the first repository, task 5). She may change port/password later — then edit both appsettings files.
-3. Migration: create tables `Authors`, `Books`, `BookSpecs`, `Reviews` (re-runnable) + seed them from `Data/*.json`, keeping the same Ids (UI routes use them).
-   - Price columns `DECIMAL(18,0)` (decided 2026-10-07) instead of the current strings ("185000") — C# `Price`/`OldPrice` become `decimal`; UI must be told (see "For the UI repo").
-   - Add stock column (`Stock INT`) now so phase 3 does not need a table rework.
-4. Migration: stored procedures for every current repository method (Books: GetAll, GetById, GetNewest, GetFeatured, GetRelated, GetSimilar, GetByAuthor, Search, Insert, Update, Delete; Authors; Reviews: GetByBookId, GetByAuthorId).
+4. Migration: stored procedures (`InStock` = `Stock > 0` computed in the SELECT; `Specs` ordered by `SortOrder`) for every current repository method (Books: GetAll, GetById, GetNewest, GetFeatured, GetRelated, GetSimilar, GetByAuthor, Search, Insert, Update, Delete; Authors; Reviews: GetByBookId, GetByAuthorId).
 5. Replace `Json*Repository` + `I*Repository` with Dapper repositories (`BooksRepository`, `AuthorsRepository`, `ReviewsRepository`); register them in `Program.cs`; delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj only after she confirms the DB works.
 6. Bring existing code to skill `dotnet-simple` naming (best done together with task 5):
    - Split `Models/Dto/BookRequests.cs` into `CreateBookRequestModel.cs` and `UpdateBookRequestModel.cs`.
@@ -53,11 +50,14 @@
 <!-- scripts she still has to execute locally, in this order. Remove a line when she confirms. -->
 - `Database/Migrations/0001_create_database.sql` — creates `MorisakiBookshop` with collation `Persian_100_CI_AI`; run while connected to `master`.
 
+- `Database/Migrations/0002_create_catalog_tables.sql` — tables `Authors`, `Books`, `BookSpecs`, `Reviews`; run against `MorisakiBookshop`.
+- `Database/Migrations/0003_seed_catalog.sql` — copies `Data/*.json` into those tables (same Ids); run after 0002.
+
 ## For the UI repo
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->
 - (DONE in API 2026-10-07) Every response is wrapped: `{ isSuccess, data, message, errors }`. Not-found is HTTP 200 with `isSuccess: false`. Validation errors = HTTP 400 with the same shape; server errors = 500 with the same shape. Create/update/delete in `BooksManagement` also answer 200 + envelope (create no longer returns 201 + Location; delete no longer 204).
 - UI `public/env/env.js` points to `https://localhost:44388/api/`, but `Properties/launchSettings.json` uses `https://localhost:7106` / `http://localhost:5074` — align one of them.
-- (after tasks 3-5) `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
+- (after tasks 4-5) `InStock` stays in the JSON but is computed from `Stock > 0` (no `InStock` column); `Price` / `OldPrice` become JSON numbers (`DECIMAL(18,0)`), not strings.
 - (planned, phases 2-4) New endpoint groups will appear: auth (OTP, email+password), profile/addresses, cart, orders, payment. Contracts are written here when each task is designed.
 
 ## Questions for her
