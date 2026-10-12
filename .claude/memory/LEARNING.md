@@ -12,3 +12,8 @@
 - `IDENTITY(1,1)` = auto-increment Id. `SET IDENTITY_INSERT dbo.X ON` lets a script insert fixed Ids (used by the seed so UI routes keep working).
 - `FOREIGN KEY` = a column that must point to an existing row in another table (`Books.AuthorId` -> `Authors.Id`); `ON DELETE CASCADE` deletes child rows with the parent. `CHECK` = a rule the database enforces on every write (`Stock >= 0`).
 - `GO` separates batches in SSMS scripts; it is not SQL itself. `IF NOT EXISTS ... INSERT` makes a seed re-runnable.
+- `CREATE OR ALTER PROCEDURE` = a function that lives in the database; calling it from Dapper is like calling an API endpoint instead of building the query in the client. Re-running the script just replaces it.
+- `TOP (@Count)` + `ORDER BY` = `.slice(0, n)` after sorting; `CASE WHEN ... THEN 0 ELSE 1 END` inside `ORDER BY` puts the matching rows first.
+- `STRING_SPLIT(@Text, N',')` turns comma text into rows; `OPENJSON(@Json)` turns a JSON array into rows (like `JSON.parse` + iterate), `[key]` is the array index.
+- `BEGIN TRANSACTION ... COMMIT` + `SET XACT_ABORT ON` = all statements succeed or none do (any error rolls everything back).
+
