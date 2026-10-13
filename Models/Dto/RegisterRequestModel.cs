@@ -12,6 +12,11 @@ namespace TheMorisakiBookshop.Models.Dto
         [RegularExpression(@"^\d{6}$", ErrorMessage = "کد تأیید ۶ رقم است.")]
         public string Code { get; set; } = "";
 
+        [Required(ErrorMessage = "نام الزامی است.")]
+        [MinLength(2, ErrorMessage = "نام باید حداقل ۲ نویسه باشد.")]
+        [MaxLength(100, ErrorMessage = "نام باید حداکثر ۱۰۰ نویسه باشد.")]
+        public string Name { get; set; } = "";
+
         [Required(ErrorMessage = "ایمیل الزامی است.")]
         [EmailAddress(ErrorMessage = "ایمیل معتبر وارد کنید.")]
         [MaxLength(256, ErrorMessage = "ایمیل باید حداکثر ۲۵۶ نویسه باشد.")]
@@ -21,5 +26,8 @@ namespace TheMorisakiBookshop.Models.Dto
         [MinLength(8, ErrorMessage = "رمز عبور باید حداقل ۸ نویسه باشد.")]
         [MaxLength(100, ErrorMessage = "رمز عبور باید حداکثر ۱۰۰ نویسه باشد.")]
         public string Password { get; set; } = "";
+
+        // true = the token lasts Jwt:RememberMeDays instead of Jwt:ExpiresMinutes
+        public bool RememberMe { get; set; }
     }
 }
