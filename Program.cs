@@ -1,8 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TheMorisakiBookshop.Middleware;
 using TheMorisakiBookshop.Models;
+using Microsoft.IdentityModel.Tokens;
 using TheMorisakiBookshop.Repositories;
+using TheMorisakiBookshop.Security;
 
 namespace TheMorisakiBookshop
 {
@@ -39,6 +43,63 @@ namespace TheMorisakiBookshop
             builder.Services.AddScoped<BooksRepository>();
             builder.Services.AddScoped<AuthorsRepository>();
             builder.Services.AddScoped<ReviewsRepository>();
+            builder.Services.AddScoped<UsersRepository>();
+            builder.Services.AddScoped<OtpCodesRepository>();
+
+            builder.Services.AddScoped<OtpService>();
+            builder.Services.AddScoped<SmsSender>();
+            builder.Services.AddScoped<PasswordService>();
+            builder.Services.AddScoped<JwtTokenService>();
+
+            // The signing key is a secret: Development gets a throwaway one from
+            // appsettings.Development.json, production must set Jwt__Key as an environment variable.
+            string jwtKey = builder.Configuration["Jwt:Key"] ?? "";
+
+            if (jwtKey.Length < 32)
+            {
+                throw new InvalidOperationException("Jwt:Key is missing or shorter than 32 characters.");
+            }
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                        ClockSkew = TimeSpan.FromMinutes(1)
+                    };
+
+                    // 401 / 403 use the same envelope as every other response.
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = async context =>
+                        {
+                            context.HandleResponse();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            await context.Response.WriteAsJsonAsync(new CustomActionResult
+                            {
+                                IsSuccess = false,
+                                Message = "Please log in."
+                            });
+                        },
+                        OnForbidden = async context =>
+                        {
+                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                            await context.Response.WriteAsJsonAsync(new CustomActionResult
+                            {
+                                IsSuccess = false,
+                                Message = "You are not allowed to do this."
+                            });
+                        }
+                    };
+                });
+            builder.Services.AddAuthorization();
 
             // "AllowedOrigins" comes from appsettings — falls back to the
             // Angular dev server if nothing is configured, rather than
@@ -72,6 +133,7 @@ namespace TheMorisakiBookshop
 
             app.UseCors("AllowFrontendOrigin");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

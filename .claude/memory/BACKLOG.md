@@ -6,16 +6,15 @@
 ## Open tasks
 
 ### Phase 0 — Foundation
-5. Delete `Data/*.json` and the `<None Include="Data\**\*.json" ...>` item in the csproj — she confirmed the DB-backed API works (2026-10-12) — ask before deleting.
 7. UI side of phase 0 (UI repo): `ApiHelperService` base pieces + align API URL → see UI BACKLOG tasks 1-2.
 
 ### Phase 1 — Good catalog
 
 ### Phase 2 — Accounts
-11. Login with **mobile + OTP (SMS)** first. Decide with her before coding: SMS provider, OTP rules (length, expiry, resend limit, rate limit), JWT lifetime, new NuGet packages (JWT bearer).
-12. Optional second login: **email + password** (password hashing package — ask first). Built after 11 works; same JWT after either login.
-13. Tables + procedures: `Users`, `Addresses`; endpoints for profile and addresses (replaces UI localStorage).
-14. Roles: `Customer`, `Admin` (needed by phase 5).
+11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
+12. Rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
+13. Profile/addresses: tables `Addresses`; endpoints replace UI localStorage (`Users` already exists).
+14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
 ### Phase 3 — Cart, orders, stock
 15. Cart stored per user in DB; guest cart stays in UI localStorage and is merged into the server cart right after login (decided 2026-10-07).
@@ -28,7 +27,7 @@
 20. Stock release for unpaid/cancelled orders (timeout rule) — decide with her.
 
 ### Phase 5 — Admin (required before public launch)
-21. **Protect `BooksManagementController` with the Admin role** — today anyone can delete books or change prices. Highest priority of this phase; do it as soon as roles (14) exist.
+21. (DONE 2026-10-13: `BooksManagementController` needs role Admin.) Still: the UI admin panel must send the token.
 22. Admin endpoints: manage books, authors, stock, orders (status change, tracking code).
 23. Admin UI panel (UI repo).
 
@@ -38,9 +37,17 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0009_books_filters_procedure.sql` — new `dbo.Books_GetFilters` (distinct genres/languages, price range). Run it BEFORE using the new search page.
+- `Database/Migrations/0010_create_auth_tables.sql` — `Users`, `OtpCodes`. Run before 0011.
+- `Database/Migrations/0011_auth_procedures.sql` — OTP + user procedures. After it, log in once through the API, then make yourself admin: `EXEC dbo.Users_SetRole @Mobile = N'09...', @Role = N'Admin';`.
 
 ## For the UI repo
+- (DONE in API 2026-10-13, UI not yet) Auth contract, all answer the envelope. Send `Authorization: Bearer <token>` on logged-in calls; 401 = not logged in, 403 = not Admin (both envelope).
+  - `POST Auth/RequestOtp` `{ mobile }` (`09xxxxxxxxx`) → `isSuccess`; `false` + message when asked again within 1 min or >5 per hour. Code = 6 digits, valid 2 min. No SMS yet: the code is in the API console log.
+  - `POST Auth/VerifyOtp` `{ mobile, code }` → `data = { token, expiresAt, user: { id, mobile, email, hasPassword, role } }`. New mobile = account created. 5 wrong codes lock that code.
+  - `POST Auth/LoginWithPassword` `{ email, password }` → same `data`.
+  - `POST Auth/SetCredentials` `{ email, password (min 8) }` (needs token) → adds/changes email+password.
+  - `POST Auth/ResetPassword` `{ mobile, code, newPassword }` (code from `RequestOtp`; only accounts that already have a password) → `isSuccess`; user then logs in normally.
+  - `GET Auth/GetMe` (needs token) → `data = user`. Token lifetime 60 min (`Jwt:ExpiresMinutes`), no refresh token yet.
 - (DONE in API + UI 2026-10-12) `GET Books/GetSearchFilters` → `data = { minPrice, maxPrice, genres[], languages[] }`.
 - (DONE in API + UI 2026-10-12) `GET Books/SearchBooks` returns `data = { items, totalCount, page, pageSize }` instead of a plain list. New query params: `page` (default 1), `pageSize` (default 9, clamped 1-50 in SQL), `authorId`, `minPrice`, `maxPrice`. Still: `q`, `genres`, `languages`, `inStockOnly`, `sort`.
 <!-- API contract changes the Angular app must follow. She copies these into the UI session. -->

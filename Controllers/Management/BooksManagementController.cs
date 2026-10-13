@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheMorisakiBookshop.Models;
 using TheMorisakiBookshop.Models.Dto;
@@ -5,10 +6,8 @@ using TheMorisakiBookshop.Repositories;
 
 namespace TheMorisakiBookshop.Controllers.Management
 {
-    // No authentication/authorization exists yet anywhere in this project —
-    // these mutating endpoints are open to anyone who can reach the API.
-    // Fine for local development; add an auth guard before this is exposed
-    // publicly or an admin UI is built against it.
+    // Only logged-in admins (make one with dbo.Users_SetRole, see script 0011).
+    [Authorize(Roles = "Admin")]
     public class BooksManagementController : BaseController
     {
         private const int NewBooksCount = 8;
