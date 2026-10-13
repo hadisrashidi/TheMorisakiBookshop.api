@@ -37,7 +37,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 return Ok(new CustomActionResult<AuthorOutputModel>
                 {
                     IsSuccess = false,
-                    Message = $"Author with id {id} not found."
+                    Message = $"نویسنده‌ای با شناسه {id} پیدا نشد."
                 });
             }
 

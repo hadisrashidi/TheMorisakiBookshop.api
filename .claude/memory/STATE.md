@@ -23,6 +23,7 @@ Onboarding: done (2026-10-07)
 - Follow-up: she could not find the code in the log → Development-only `Sms:ShowCodeInResponse` shows it in `message` of `RequestOtp` (DECISIONS). Build ok, not run.
 - She ran 0010-0011: OTP login works (user 1 created). Then: Swagger "Authorize" button (`AddSecurityDefinition` in `Program.cs`) and UI login screens (UI repo, same branch). She has no direct repo access on her work PC: delivery = branch ZIP via the VM; list changed/added/deleted files at the end of each reply.
 - Next: she makes herself Admin (`Users_SetRole`), tests the UI login against the real API.
+- Follow-up: all API messages + validation errors translated to Persian (see DECISIONS); build ok, 400/401 verified with curl. Open: does she want a real sign-up form (BACKLOG question).
 ### 2026-10-12 — Task 8b: search filters endpoint (web session, same branch)
 - Did: she ran 0008, search works. Wrote `0009_books_filters_procedure.sql`, `BookFiltersOutputModel`, `BooksRepository.GetFiltersAsync`, `Books/GetSearchFilters`; UI search page now takes genres/languages from it and has author + price filters.
 - Verified: `dotnet build` 0 warnings, UI build ok. NOT verified: 0009 never run, no browser test.

@@ -25,7 +25,7 @@ namespace TheMorisakiBookshop
                     {
                         CustomActionResult result = new CustomActionResult();
                         result.IsSuccess = false;
-                        result.Message = "The request is not valid.";
+                        result.Message = "اطلاعات واردشده معتبر نیست.";
 
                         foreach (KeyValuePair<string, ModelStateEntry> entry in context.ModelState)
                         {
@@ -113,7 +113,7 @@ namespace TheMorisakiBookshop
                             await context.Response.WriteAsJsonAsync(new CustomActionResult
                             {
                                 IsSuccess = false,
-                                Message = "Please log in."
+                                Message = "لطفاً وارد حساب خود شوید."
                             });
                         },
                         OnForbidden = async context =>
@@ -122,7 +122,7 @@ namespace TheMorisakiBookshop
                             await context.Response.WriteAsJsonAsync(new CustomActionResult
                             {
                                 IsSuccess = false,
-                                Message = "You are not allowed to do this."
+                                Message = "اجازه انجام این کار را ندارید."
                             });
                         }
                     };

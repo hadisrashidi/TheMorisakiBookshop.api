@@ -47,12 +47,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             if (status == "TooSoon")
             {
-                return Ok(new CustomActionResult { IsSuccess = false, Message = "Please wait one minute before asking for a new code." });
+                return Ok(new CustomActionResult { IsSuccess = false, Message = "لطفاً یک دقیقه صبر کنید و دوباره کد بخواهید." });
             }
 
             if (status == "TooMany")
             {
-                return Ok(new CustomActionResult { IsSuccess = false, Message = "Too many codes requested. Try again in an hour." });
+                return Ok(new CustomActionResult { IsSuccess = false, Message = "تعداد درخواست‌ها زیاد بود. یک ساعت دیگر دوباره تلاش کنید." });
             }
 
             await _smsSender.SendAsync(request.Mobile, "Your Morisaki Bookshop code: " + code, cancellationToken);
@@ -60,7 +60,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
             // Local testing only (Program.cs refuses to start with this on outside Development).
             if (_showCodeInResponse)
             {
-                return Ok(new CustomActionResult { IsSuccess = true, Message = "DEV ONLY - your code is " + code });
+                return Ok(new CustomActionResult { IsSuccess = true, Message = "فقط برای توسعه - کد شما: " + code });
             }
 
             return Ok(new CustomActionResult { IsSuccess = true });
@@ -97,7 +97,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             if (user == null || passwordIsRight == false)
             {
-                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "Email or password is wrong." });
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "ایمیل یا رمز عبور نادرست است." });
             }
 
             AuthTokenOutputModel token = _jwtTokenService.CreateToken(user);
@@ -117,7 +117,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             if (status == "EmailTaken")
             {
-                return Ok(new CustomActionResult { IsSuccess = false, Message = "This email is already used by another account." });
+                return Ok(new CustomActionResult { IsSuccess = false, Message = "این ایمیل برای حساب دیگری ثبت شده است." });
             }
 
             return Ok(new CustomActionResult { IsSuccess = true });
@@ -141,7 +141,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             if (changed == false)
             {
-                return Ok(new CustomActionResult { IsSuccess = false, Message = "This account has no email and password yet." });
+                return Ok(new CustomActionResult { IsSuccess = false, Message = "برای این حساب هنوز ایمیل و رمز عبور ثبت نشده است. با کد پیامکی وارد شوید." });
             }
 
             return Ok(new CustomActionResult { IsSuccess = true });
@@ -157,7 +157,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             if (user == null)
             {
-                return Ok(new CustomActionResult<UserOutputModel> { IsSuccess = false, Message = "User not found." });
+                return Ok(new CustomActionResult<UserOutputModel> { IsSuccess = false, Message = "کاربر پیدا نشد." });
             }
 
             return Ok(new CustomActionResult<UserOutputModel>
@@ -178,15 +178,15 @@ namespace TheMorisakiBookshop.Controllers.Shop
         {
             if (status == "Locked")
             {
-                return "Too many wrong codes. Ask for a new code.";
+                return "چند بار کد اشتباه وارد شد. کد تازه بخواهید.";
             }
 
             if (status == "Invalid")
             {
-                return "The code is wrong.";
+                return "کد واردشده درست نیست.";
             }
 
-            return "The code has expired. Ask for a new code.";
+            return "کد منقضی شده است. کد تازه بخواهید.";
         }
     }
 }

@@ -59,6 +59,6 @@
 - (DONE in API 2026-10-12) `GET Books/SearchBooks`: `inStockOnly` is a plain bool; `genres` / `languages` repeat in the query (`?genres=a&genres=b`). Book `specs` still `[{ label, value }]`. `Price`/`OldPrice` JSON numbers, `oldPrice` is `null` (not "") when there is no discount. Review `date` stays Jalali text.
 
 ## Questions for her
-- API messages are English but the UI is Persian: Persian messages in the API, or error codes the UI translates? (also in UI BACKLOG)
+- Sign-up: keep one "login or sign up" flow (OTP) or add a real sign-up form (name + mobile + email + password + code)? Asked 2026-10-13.
 - Payment gateway choice and its production requirements (task 18).
 - SMS provider for OTP (task 11).

@@ -48,7 +48,7 @@ namespace TheMorisakiBookshop.Middleware
         {
             CustomActionResult result = new CustomActionResult();
             result.IsSuccess = false;
-            result.Message = "An unexpected error occurred.";
+            result.Message = "خطای غیرمنتظره‌ای رخ داد. لطفاً دوباره تلاش کنید.";
 
             if (_environment.IsDevelopment())
             {

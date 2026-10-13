@@ -4,17 +4,17 @@ namespace TheMorisakiBookshop.Models.Dto
 {
     public class ResetPasswordRequestModel
     {
-        [Required]
-        [RegularExpression(@"^09\d{9}$", ErrorMessage = "Mobile must look like 09123456789.")]
+        [Required(ErrorMessage = "شماره موبایل الزامی است.")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره موبایل را به شکل ۰۹۱۲۳۴۵۶۷۸۹ وارد کنید.")]
         public string Mobile { get; set; } = "";
 
-        [Required]
-        [RegularExpression(@"^\d{6}$", ErrorMessage = "The code has 6 digits.")]
+        [Required(ErrorMessage = "کد تأیید الزامی است.")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "کد تأیید ۶ رقم است.")]
         public string Code { get; set; } = "";
 
-        [Required]
-        [MinLength(8)]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "رمز عبور الزامی است.")]
+        [MinLength(8, ErrorMessage = "رمز عبور باید حداقل ۸ نویسه باشد.")]
+        [MaxLength(100, ErrorMessage = "رمز عبور باید حداکثر ۱۰۰ نویسه باشد.")]
         public string NewPassword { get; set; } = "";
     }
 }
