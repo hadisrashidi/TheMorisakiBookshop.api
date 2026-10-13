@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TheMorisakiBookshop.Middleware;
 using TheMorisakiBookshop.Models;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using TheMorisakiBookshop.Repositories;
 using TheMorisakiBookshop.Security;
 
@@ -38,7 +39,29 @@ namespace TheMorisakiBookshop
                     };
                 });
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                // Adds the "Authorize" button: paste the token from VerifyOtp (without the word "Bearer").
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        new List<string>()
+                    }
+                });
+            });
 
             builder.Services.AddScoped<BooksRepository>();
             builder.Services.AddScoped<AuthorsRepository>();

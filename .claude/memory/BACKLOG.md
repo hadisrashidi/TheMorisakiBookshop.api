@@ -41,7 +41,7 @@
 - `Database/Migrations/0011_auth_procedures.sql` — OTP + user procedures. After it, log in once through the API, then make yourself admin: `EXEC dbo.Users_SetRole @Mobile = N'09...', @Role = N'Admin';`.
 
 ## For the UI repo
-- (DONE in API 2026-10-13, UI not yet) Auth contract, all answer the envelope. Send `Authorization: Bearer <token>` on logged-in calls; 401 = not logged in, 403 = not Admin (both envelope).
+- (DONE in API + UI 2026-10-13) Auth contract, all answer the envelope. Send `Authorization: Bearer <token>` on logged-in calls; 401 = not logged in, 403 = not Admin (both envelope).
   - `POST Auth/RequestOtp` `{ mobile }` (`09xxxxxxxxx`) → `isSuccess`; `false` + message when asked again within 1 min or >5 per hour. Code = 6 digits, valid 2 min. No SMS yet: the code is in the API console log.
   - `POST Auth/VerifyOtp` `{ mobile, code }` → `data = { token, expiresAt, user: { id, mobile, email, hasPassword, role } }`. New mobile = account created. 5 wrong codes lock that code.
   - `POST Auth/LoginWithPassword` `{ email, password }` → same `data`.
@@ -59,5 +59,6 @@
 - (DONE in API 2026-10-12) `GET Books/SearchBooks`: `inStockOnly` is a plain bool; `genres` / `languages` repeat in the query (`?genres=a&genres=b`). Book `specs` still `[{ label, value }]`. `Price`/`OldPrice` JSON numbers, `oldPrice` is `null` (not "") when there is no discount. Review `date` stays Jalali text.
 
 ## Questions for her
+- API messages are English but the UI is Persian: Persian messages in the API, or error codes the UI translates? (also in UI BACKLOG)
 - Payment gateway choice and its production requirements (task 18).
 - SMS provider for OTP (task 11).
