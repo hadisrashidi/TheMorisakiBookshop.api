@@ -100,6 +100,26 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        public async Task<bool> SetNameAsync(int id, string name, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                parameters.Add("@Name", name);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_SetName",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
+
+                return affectedRows > 0;
+            }
+        }
+
         // Returns true when the account exists and already had a password
         public async Task<bool> ResetPasswordAsync(string mobile, string passwordHash, CancellationToken cancellationToken)
         {

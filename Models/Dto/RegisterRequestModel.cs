@@ -12,6 +12,11 @@ namespace TheMorisakiBookshop.Models.Dto
         [RegularExpression(@"^\d{6}$", ErrorMessage = "کد تأیید ۶ رقم است.")]
         public string Code { get; set; } = "";
 
+        [Required(ErrorMessage = "نام الزامی است.")]
+        [MinLength(2, ErrorMessage = "نام باید حداقل ۲ نویسه باشد.")]
+        [MaxLength(100, ErrorMessage = "نام باید حداکثر ۱۰۰ نویسه باشد.")]
+        public string Name { get; set; } = "";
+
         [Required(ErrorMessage = "ایمیل الزامی است.")]
         [EmailAddress(ErrorMessage = "ایمیل معتبر وارد کنید.")]
         [MaxLength(256, ErrorMessage = "ایمیل باید حداکثر ۲۵۶ نویسه باشد.")]

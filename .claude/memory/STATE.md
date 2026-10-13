@@ -25,6 +25,7 @@ Onboarding: done (2026-10-07)
 - Next: she makes herself Admin (`Users_SetRole`), tests the UI login against the real API.
 - Follow-up: all API messages + validation errors translated to Persian (see DECISIONS); build ok, 400/401 verified with curl. Then `Auth/Register` added (email + password sign-up, DECISIONS); build ok, not run against a DB.
 - Follow-up: `RememberMe` on the three login endpoints (30-day token, DECISIONS); build ok, not run against a DB.
+- Follow-up: `Users.Name` (script 0012), `Register` takes `name`, `Auth/UpdateProfile`; build ok, script not run.
 ### 2026-10-12 — Task 8b: search filters endpoint (web session, same branch)
 - Did: she ran 0008, search works. Wrote `0009_books_filters_procedure.sql`, `BookFiltersOutputModel`, `BooksRepository.GetFiltersAsync`, `Books/GetSearchFilters`; UI search page now takes genres/languages from it and has author + price filters.
 - Verified: `dotnet build` 0 warnings, UI build ok. NOT verified: 0009 never run, no browser test.

@@ -37,6 +37,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0012_users_name.sql` — adds `Users.Name`, updates 3 read procedures, new `dbo.Users_SetName`. Run after 0011 and BEFORE using the new API (Register/GetById need the column).
 - `Database/Migrations/0010_create_auth_tables.sql` — `Users`, `OtpCodes`. Run before 0011.
 - `Database/Migrations/0011_auth_procedures.sql` — OTP + user procedures. After it, log in once through the API, then make yourself admin: `EXEC dbo.Users_SetRole @Mobile = N'09...', @Role = N'Admin';`.
 
@@ -45,7 +46,8 @@
   - `POST Auth/RequestOtp` `{ mobile }` (`09xxxxxxxxx`) → `isSuccess`; `false` + message when asked again within 1 min or >5 per hour. Code = 6 digits, valid 2 min. No SMS yet: the code is in the API console log.
   - `POST Auth/VerifyOtp` `{ mobile, code }` → `data = { token, expiresAt, user: { id, mobile, email, hasPassword, role } }`. New mobile = account created. 5 wrong codes lock that code.
   - (DONE 2026-10-13) `VerifyOtp`, `LoginWithPassword` and `Register` also take `rememberMe` (bool, default false): true = token valid 30 days, else 1 hour.
-  - `POST Auth/Register` `{ mobile, code, email, password (min 8) }` (code from `RequestOtp`) → same `data` as `VerifyOtp`. `isSuccess: false` when the email belongs to another mobile.
+  - (DONE 2026-10-13) User objects carry `name` (string or null). `POST Auth/UpdateProfile` `{ name }` (needs token) → `data = user`.
+  - `POST Auth/Register` `{ mobile, code, name, email, password (min 8) }` (code from `RequestOtp`) → same `data` as `VerifyOtp`. `isSuccess: false` when the email belongs to another mobile.
   - `POST Auth/LoginWithPassword` `{ email, password }` → same `data`.
   - `POST Auth/SetCredentials` `{ email, password (min 8) }` (needs token) → adds/changes email+password.
   - `POST Auth/ResetPassword` `{ mobile, code, newPassword }` (code from `RequestOtp`; only accounts that already have a password) → `isSuccess`; user then logs in normally.

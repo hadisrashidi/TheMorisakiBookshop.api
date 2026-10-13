@@ -116,7 +116,9 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "این ایمیل برای حساب دیگری ثبت شده است." });
             }
 
-            // Read the user again so the token response carries the new email.
+            await _usersRepository.SetNameAsync(user.Id, request.Name.Trim(), cancellationToken);
+
+            // Read the user again so the token response carries the new email and name.
             UserModel registered = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
             AuthTokenOutputModel token = _jwtTokenService.CreateToken(registered, request.RememberMe);
 
@@ -183,6 +185,34 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             return Ok(new CustomActionResult { IsSuccess = true });
+        }
+
+        // The logged-in person changes the name shown in the UI.
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequestModel request, CancellationToken cancellationToken)
+        {
+            int userId = GetCurrentUserId();
+
+            bool saved = await _usersRepository.SetNameAsync(userId, request.Name.Trim(), cancellationToken);
+
+            if (saved == false)
+            {
+                return Ok(new CustomActionResult<UserOutputModel> { IsSuccess = false, Message = "کاربر پیدا نشد." });
+            }
+
+            UserModel? user = await _usersRepository.GetByIdAsync(userId, cancellationToken);
+
+            if (user == null)
+            {
+                return Ok(new CustomActionResult<UserOutputModel> { IsSuccess = false, Message = "کاربر پیدا نشد." });
+            }
+
+            return Ok(new CustomActionResult<UserOutputModel>
+            {
+                IsSuccess = true,
+                Data = _jwtTokenService.ToOutputModel(user)
+            });
         }
 
         [Authorize]

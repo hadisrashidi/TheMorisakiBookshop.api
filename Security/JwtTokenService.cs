@@ -55,6 +55,7 @@ namespace TheMorisakiBookshop.Security
             output.Id = user.Id;
             output.Mobile = user.Mobile;
             output.Email = user.Email;
+            output.Name = user.Name;
             output.HasPassword = user.PasswordHash != null;
             output.Role = user.Role;
 
