@@ -16,6 +16,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
         private readonly SmsSender _smsSender;
         private readonly PasswordService _passwordService;
         private readonly JwtTokenService _jwtTokenService;
+        private readonly bool _showCodeInResponse;
 
         public AuthController(
             UsersRepository usersRepository,
@@ -23,7 +24,8 @@ namespace TheMorisakiBookshop.Controllers.Shop
             OtpService otpService,
             SmsSender smsSender,
             PasswordService passwordService,
-            JwtTokenService jwtTokenService)
+            JwtTokenService jwtTokenService,
+            IConfiguration configuration)
         {
             _usersRepository = usersRepository;
             _otpCodesRepository = otpCodesRepository;
@@ -31,6 +33,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
             _smsSender = smsSender;
             _passwordService = passwordService;
             _jwtTokenService = jwtTokenService;
+            _showCodeInResponse = configuration.GetValue<bool>("Sms:ShowCodeInResponse");
         }
 
         // Step 1 of OTP login (also used to start a password reset): sends a 6-digit code by SMS.
@@ -53,6 +56,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             await _smsSender.SendAsync(request.Mobile, "Your Morisaki Bookshop code: " + code, cancellationToken);
+
+            // Local testing only (Program.cs refuses to start with this on outside Development).
+            if (_showCodeInResponse)
+            {
+                return Ok(new CustomActionResult { IsSuccess = true, Message = "DEV ONLY - your code is " + code });
+            }
 
             return Ok(new CustomActionResult { IsSuccess = true });
         }

@@ -60,6 +60,11 @@ namespace TheMorisakiBookshop
                 throw new InvalidOperationException("Jwt:Key is missing or shorter than 32 characters.");
             }
 
+            if (builder.Configuration.GetValue<bool>("Sms:ShowCodeInResponse") && builder.Environment.IsDevelopment() == false)
+            {
+                throw new InvalidOperationException("Sms:ShowCodeInResponse may only be true in Development.");
+            }
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
