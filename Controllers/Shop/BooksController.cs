@@ -64,7 +64,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 return Ok(new CustomActionResult<BookOutputModel>
                 {
                     IsSuccess = false,
-                    Message = $"Book with id {id} not found."
+                    Message = $"کتابی با شناسه {id} پیدا نشد."
                 });
             }
 

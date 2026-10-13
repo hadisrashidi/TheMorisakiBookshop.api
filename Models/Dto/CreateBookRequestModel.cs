@@ -4,20 +4,20 @@ namespace TheMorisakiBookshop.Models.Dto
 {
     public class CreateBookRequestModel
     {
-        [Required, MinLength(1)]
+        [Required(ErrorMessage = "عنوان کتاب الزامی است."), MinLength(1, ErrorMessage = "عنوان کتاب الزامی است.")]
         public string Title { get; set; } = "";
 
-        [Required, MinLength(1)]
+        [Required(ErrorMessage = "تصویر کتاب الزامی است."), MinLength(1, ErrorMessage = "تصویر کتاب الزامی است.")]
         public string Image { get; set; } = "";
 
-        [Range(0, 1000000000000)]
+        [Range(0, 1000000000000, ErrorMessage = "قیمت باید عددی صفر یا بیشتر باشد.")]
         public decimal Price { get; set; }
 
         // null = no old price (book is not discounted)
-        [Range(0, 1000000000000)]
+        [Range(0, 1000000000000, ErrorMessage = "قیمت قبلی باید عددی صفر یا بیشتر باشد.")]
         public decimal? OldPrice { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "نویسنده الزامی است.")]
         public int AuthorId { get; set; }
 
         public string Genre { get; set; } = "";
@@ -26,7 +26,7 @@ namespace TheMorisakiBookshop.Models.Dto
 
         public string Description { get; set; } = "";
 
-        [Range(0, int.MaxValue)]
+        [Range(0, int.MaxValue, ErrorMessage = "موجودی باید عددی صفر یا بیشتر باشد.")]
         public int Stock { get; set; }
 
         public List<BookSpecRequestModel> Specs { get; set; } = new List<BookSpecRequestModel>();

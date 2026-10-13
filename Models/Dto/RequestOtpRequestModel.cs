@@ -4,8 +4,8 @@ namespace TheMorisakiBookshop.Models.Dto
 {
     public class RequestOtpRequestModel
     {
-        [Required]
-        [RegularExpression(@"^09\d{9}$", ErrorMessage = "Mobile must look like 09123456789.")]
+        [Required(ErrorMessage = "شماره موبایل الزامی است.")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره موبایل را به شکل ۰۹۱۲۳۴۵۶۷۸۹ وارد کنید.")]
         public string Mobile { get; set; } = "";
     }
 }
