@@ -85,6 +85,44 @@ namespace TheMorisakiBookshop.Controllers.Shop
             return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
         }
 
+        // Sign-up with everything at once: the SMS code proves the mobile number, then the account
+        // is created with email + password and the person is logged in.
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestModel request, CancellationToken cancellationToken)
+        {
+            // Checked before the code, so a taken email does not use up the code.
+            UserModel? emailOwner = await _usersRepository.GetByEmailAsync(request.Email, cancellationToken);
+
+            if (emailOwner != null && emailOwner.Mobile != request.Mobile)
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "این ایمیل برای حساب دیگری ثبت شده است." });
+            }
+
+            string codeHash = _otpService.HashCode(request.Mobile, request.Code);
+            string otpStatus = await _otpCodesRepository.VerifyAsync(request.Mobile, codeHash, cancellationToken);
+
+            if (otpStatus != "Ok")
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = GetOtpFailureMessage(otpStatus) });
+            }
+
+            UserModel user = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
+            string passwordHash = _passwordService.Hash(request.Password);
+
+            string credentialsStatus = await _usersRepository.SetCredentialsAsync(user.Id, request.Email, passwordHash, cancellationToken);
+
+            if (credentialsStatus == "EmailTaken")
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "این ایمیل برای حساب دیگری ثبت شده است." });
+            }
+
+            // Read the user again so the token response carries the new email.
+            UserModel registered = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
+            AuthTokenOutputModel token = _jwtTokenService.CreateToken(registered);
+
+            return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
+        }
+
         [HttpPost]
         public async Task<IActionResult> LoginWithPassword([FromBody] PasswordLoginRequestModel request, CancellationToken cancellationToken)
         {
