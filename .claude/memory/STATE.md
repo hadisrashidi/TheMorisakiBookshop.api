@@ -7,15 +7,20 @@ Onboarding: done (2026-10-07)
 - Routes: `api/[controller]/[action]` from `Controllers/BaseController.cs`; only `[HttpGet]` / `[HttpPost]` used.
 - All endpoints return the `CustomActionResult` envelope (always HTTP 200; 400 validation / 500 error with same shape).
 - Controllers: `Controllers/Shop/` (Books, Authors, Reviews — read only), `Controllers/Management/BooksManagementController.cs` (create/update/delete books, no auth yet).
-- Data = SQL Server via Dapper + stored procedures: `Repositories/BooksRepository.cs`, `AuthorsRepository.cs`, `ReviewsRepository.cs` (concrete classes, `AddScoped` in `Program.cs`, connection string `ConnectionStrings:Bookshop`). Models: `*OutputModel`, `Models/Dto/*RequestModel`. Old `Data/*.json` files still in the repo (unused) until she confirms the DB works.
+- Data = SQL Server via Dapper + stored procedures: `Repositories/BooksRepository.cs`, `AuthorsRepository.cs`, `ReviewsRepository.cs` (concrete classes, `AddScoped` in `Program.cs`, connection string `ConnectionStrings:Bookshop`). Models: `*OutputModel`, `Models/Dto/*RequestModel`. `Data/*.json` deleted (2026-10-13).
 - Packages `Dapper` + `Microsoft.Data.SqlClient` added; `ConnectionStrings:Bookshop` in both appsettings files. `Database/Migrations/0001_create_database.sql` (collation `Persian_100_CI_AI`), `0002_create_catalog_tables.sql`, `0003_seed_catalog.sql` written, she ran 0001-0003 on Docker SQL Server (2026-10-12, OK). She ran procedure scripts `0004`-`0007` (2026-10-12, OK).
 - CORS origins from `Cors:AllowedOrigins` (Development: `http://localhost:4200`).
+- Auth (code written 2026-10-13, scripts 0010-0011 not run yet): `Controllers/Shop/AuthController.cs` (`RequestOtp`, `VerifyOtp`, `LoginWithPassword`, `SetCredentials`, `ResetPassword`, `GetMe`), JWT bearer (`Program.cs`, `Security/JwtTokenService.cs`), `Security/OtpService.cs`, `PasswordService.cs` (PBKDF2), `SmsSender.cs` (MOCK: code only in the log). `BooksManagementController` needs role `Admin`. Tables `Users`, `OtpCodes`.
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 0: tasks 1-6 done and confirmed (2026-10-12). Phase 1 done except her running script 0009. Next: delete `Data/*.json` (waiting for her OK), then phase 2.
+- Phase 2 API done in code (tasks 11-14 below). She runs 0010+0011, makes herself Admin, then the UI login screens (UI BACKLOG 5 + 13) replace the fake auth. Real SMS provider still open (mock for now).
 
 ## Session log
+### 2026-10-13 — Phase 2 API: OTP + email/password login, JWT, roles (web session, branch `claude/adoring-rubin-tb785m`)
+- Did: deleted `Data/*.json` + csproj item (her OK). Added NuGet `Microsoft.AspNetCore.Authentication.JwtBearer` 8.0.31 (her OK). Scripts `0010_create_auth_tables.sql` (Users, OtpCodes), `0011_auth_procedures.sql` (OTP create/verify with limits, user procs, `Users_SetRole`). C#: `AuthController`, `UsersRepository`, `OtpCodesRepository`, `Security/*`, request/output models, `Program.cs` JWT + 401/403 envelope, `[Authorize(Roles = "Admin")]` on `BooksManagementController`. `Jwt:Key` only in `appsettings.Development.json`.
+- Verified: `dotnet build` 0 warnings; app starts; admin endpoint = 401 envelope without token, 403 with a Customer token, passes auth with an Admin token; bad mobile = 400 envelope. NOT verified: scripts 0010-0011 never run (no SQL Server here), no real OTP/login round trip.
+- Next: she runs 0010-0011 and tests in Swagger (code is in the API log); makes herself Admin; UI login screens.
 ### 2026-10-12 — Task 8b: search filters endpoint (web session, same branch)
 - Did: she ran 0008, search works. Wrote `0009_books_filters_procedure.sql`, `BookFiltersOutputModel`, `BooksRepository.GetFiltersAsync`, `Books/GetSearchFilters`; UI search page now takes genres/languages from it and has author + price filters.
 - Verified: `dotnet build` 0 warnings, UI build ok. NOT verified: 0009 never run, no browser test.
@@ -33,14 +38,3 @@ Onboarding: done (2026-10-07)
 - Follow-up: UI got 500 on every call — her Docker maps host port 3698 to 1433, connection string said `localhost,1433` → changed to `localhost,3698` in both appsettings. Also warned: her SSMS tab was on `master` (scripts 0002-0007 may have run there; she checks `MorisakiBookshop.sys.procedures`), and port 3698 may be exposed publicly + `sa` password shared in chat → rotate, bind to 127.0.0.1.
 - Follow-up 2: `Middleware/ExceptionHandlingMiddleware.cs` replaces `UseExceptionHandler` (logs + 500 envelope, Development adds exception message to `errors`); rule "new SQL scripts start with `USE MorisakiBookshop;` + `GO`" added to skill/README/DECISIONS. Verified: build ok, run without DB shows the SqlException in `errors` and the `fail:` log line.
 - Found: UI shows no books because UI `*.api.service.ts` still expect raw JSON, API now sends the envelope (UI BACKLOG tasks 1 + 3) and `price` is a number now. Not fixed yet — asked her.
-### 2026-10-12 — Task 4: stored procedures (web session, branch `claude/nifty-lovelace-e9tc1j`)
-- Did: she ran 0001-0003 OK; wrote `0004_authors_procedures.sql`, `0005_book_specs_procedures.sql`, `0006_books_procedures.sql` (11 procs incl. Search with genres/languages/sort), `0007_reviews_procedures.sql`. Same behaviour as the JSON repositories (related/similar/featured ordering). No C# changed.
-- Decisions: `Stock` vs `InStock` left to Claude → `Stock` only (final); specs as JSON into Insert/Update; read procs return `Stock`. Logged.
-- Not verified: scripts never run (no SQL Server here) — she runs 0004-0007 and reports errors.
-- Next: task 5 + 6.
-### 2026-10-12 — Task 3: catalog tables + seed (web session, branch `claude/eager-hawking-eaaako`)
-- Did: `0002_create_catalog_tables.sql` (Authors, Books, BookSpecs, Reviews; PK/FK/CHECK/indexes) and `0003_seed_catalog.sql` (generated from `Data/*.json`, same Ids, 12 authors / 13 books / specs / 26 reviews). Files saved with UTF-8 BOM so SSMS reads Persian correctly. No C# changed.
-- Decisions: `Stock` replaces stored `InStock` (proposed, needs her OK); seed Stock = 10 placeholder. Logged.
-- Not verified: scripts never run against SQL Server (I have none) — she runs them and reports errors.
-- Next: she runs 0001-0003; then task 4.
-<!-- newest on top, max 5 blocks, older ones go to archive/sessions.md -->
