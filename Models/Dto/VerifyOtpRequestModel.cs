@@ -11,5 +11,8 @@ namespace TheMorisakiBookshop.Models.Dto
         [Required(ErrorMessage = "کد تأیید الزامی است.")]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "کد تأیید ۶ رقم است.")]
         public string Code { get; set; } = "";
+
+        // true = the token lasts Jwt:RememberMeDays instead of Jwt:ExpiresMinutes
+        public bool RememberMe { get; set; }
     }
 }

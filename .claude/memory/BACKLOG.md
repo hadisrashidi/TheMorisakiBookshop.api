@@ -12,7 +12,7 @@
 
 ### Phase 2 — Accounts
 11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
-12. Rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
+12. Refresh tokens / revoke a stolen long "remember me" token (30 days) + rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
 13. Profile/addresses: tables `Addresses`; endpoints replace UI localStorage (`Users` already exists).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
@@ -44,6 +44,7 @@
 - (DONE in API + UI 2026-10-13) Auth contract, all answer the envelope. Send `Authorization: Bearer <token>` on logged-in calls; 401 = not logged in, 403 = not Admin (both envelope).
   - `POST Auth/RequestOtp` `{ mobile }` (`09xxxxxxxxx`) → `isSuccess`; `false` + message when asked again within 1 min or >5 per hour. Code = 6 digits, valid 2 min. No SMS yet: the code is in the API console log.
   - `POST Auth/VerifyOtp` `{ mobile, code }` → `data = { token, expiresAt, user: { id, mobile, email, hasPassword, role } }`. New mobile = account created. 5 wrong codes lock that code.
+  - (DONE 2026-10-13) `VerifyOtp`, `LoginWithPassword` and `Register` also take `rememberMe` (bool, default false): true = token valid 30 days, else 1 hour.
   - `POST Auth/Register` `{ mobile, code, email, password (min 8) }` (code from `RequestOtp`) → same `data` as `VerifyOtp`. `isSuccess: false` when the email belongs to another mobile.
   - `POST Auth/LoginWithPassword` `{ email, password }` → same `data`.
   - `POST Auth/SetCredentials` `{ email, password (min 8) }` (needs token) → adds/changes email+password.

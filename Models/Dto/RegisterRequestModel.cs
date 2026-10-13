@@ -21,5 +21,8 @@ namespace TheMorisakiBookshop.Models.Dto
         [MinLength(8, ErrorMessage = "رمز عبور باید حداقل ۸ نویسه باشد.")]
         [MaxLength(100, ErrorMessage = "رمز عبور باید حداکثر ۱۰۰ نویسه باشد.")]
         public string Password { get; set; } = "";
+
+        // true = the token lasts Jwt:RememberMeDays instead of Jwt:ExpiresMinutes
+        public bool RememberMe { get; set; }
     }
 }

@@ -10,5 +10,8 @@ namespace TheMorisakiBookshop.Models.Dto
 
         [Required(ErrorMessage = "رمز عبور الزامی است.")]
         public string Password { get; set; } = "";
+
+        // true = the token lasts Jwt:RememberMeDays instead of Jwt:ExpiresMinutes
+        public bool RememberMe { get; set; }
     }
 }

@@ -15,11 +15,17 @@ namespace TheMorisakiBookshop.Security
             _configuration = configuration;
         }
 
-        public AuthTokenOutputModel CreateToken(UserModel user)
+        public AuthTokenOutputModel CreateToken(UserModel user, bool rememberMe)
         {
             string key = _configuration["Jwt:Key"] ?? "";
             int expiresMinutes = int.Parse(_configuration["Jwt:ExpiresMinutes"] ?? "60");
+            int rememberMeDays = int.Parse(_configuration["Jwt:RememberMeDays"] ?? "30");
+
             DateTime expiresAt = DateTime.UtcNow.AddMinutes(expiresMinutes);
+            if (rememberMe)
+            {
+                expiresAt = DateTime.UtcNow.AddDays(rememberMeDays);
+            }
 
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));

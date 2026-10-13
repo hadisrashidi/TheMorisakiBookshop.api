@@ -80,7 +80,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             UserModel user = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
-            AuthTokenOutputModel token = _jwtTokenService.CreateToken(user);
+            AuthTokenOutputModel token = _jwtTokenService.CreateToken(user, request.RememberMe);
 
             return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
         }
@@ -118,7 +118,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
 
             // Read the user again so the token response carries the new email.
             UserModel registered = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
-            AuthTokenOutputModel token = _jwtTokenService.CreateToken(registered);
+            AuthTokenOutputModel token = _jwtTokenService.CreateToken(registered, request.RememberMe);
 
             return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
         }
@@ -138,7 +138,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "ایمیل یا رمز عبور نادرست است." });
             }
 
-            AuthTokenOutputModel token = _jwtTokenService.CreateToken(user);
+            AuthTokenOutputModel token = _jwtTokenService.CreateToken(user, request.RememberMe);
 
             return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
         }
