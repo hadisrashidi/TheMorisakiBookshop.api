@@ -1,4 +1,5 @@
 # Decisions
+- 2026-10-13: `Sms:ShowCodeInResponse` (true only in `appsettings.Development.json`) puts the OTP in the `message` of `Auth/RequestOtp` — her request, she could not find the code in the log. Program.cs refuses to start with it on outside Development. Remove it when a real SMS provider exists.
 - 2026-10-13: Login = mobile + OTP (creates the account) AND email + password as a second method that a logged-in user adds with `Auth/SetCredentials`. No password-only sign-up: the mobile is always verified first, so every account has a verified phone. Password reset = fresh SMS code (`ResetPassword`) — this replaces the unverified UI mock reset. Chosen by Claude (she said "whatever you say").
 - 2026-10-13: OTP rules (in SQL `0011`): 6 digits, valid 2 min, 1 code/min and 5/hour per mobile, 5 wrong tries lock the code, a used code cannot be reused. Codes stored as SHA-256 of `mobile:code` only. SMS = mock (`Security/SmsSender.cs` logs the code) — she has no provider yet.
 - 2026-10-13: Passwords hashed with PBKDF2-SHA256 (100000 iterations, random salt, `Rfc2898DeriveBytes`, built into .NET — no extra package); stored as `iterations.salt.hash`.
