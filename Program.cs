@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TheMorisakiBookshop.Repositories;
 using TheMorisakiBookshop.Security;
+using TheMorisakiBookshop.Storage;
+using Microsoft.Extensions.FileProviders;
 
 namespace TheMorisakiBookshop
 {
@@ -68,6 +70,9 @@ namespace TheMorisakiBookshop
             builder.Services.AddScoped<ReviewsRepository>();
             builder.Services.AddScoped<UsersRepository>();
             builder.Services.AddScoped<OtpCodesRepository>();
+
+            // One instance for the whole app: it only holds the uploads folder path.
+            builder.Services.AddSingleton<ImageStorage>();
 
             builder.Services.AddScoped<OtpService>();
             builder.Services.AddScoped<SmsSender>();
@@ -158,6 +163,14 @@ namespace TheMorisakiBookshop
             }
 
             app.UseHttpsRedirection();
+
+            // Uploaded cover / author images are public files at /uploads/...
+            ImageStorage imageStorage = app.Services.GetRequiredService<ImageStorage>();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(imageStorage.RootPath),
+                RequestPath = "/uploads"
+            });
 
             app.UseCors("AllowFrontendOrigin");
 

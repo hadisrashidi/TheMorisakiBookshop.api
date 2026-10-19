@@ -9,3 +9,6 @@
 
 ## OS
 .DS_Store
+
+## Images uploaded from the admin panel (see Uploads:RootPath)
+uploads/

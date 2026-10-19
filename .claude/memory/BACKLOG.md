@@ -27,21 +27,27 @@
 20. Stock release for unpaid/cancelled orders (timeout rule) — decide with her.
 
 ### Phase 5 — Admin (required before public launch)
-21. (DONE 2026-10-13: `BooksManagementController` needs role Admin.) Still: the UI admin panel must send the token.
-22. Admin endpoints: manage books, authors, stock, orders (status change, tracking code).
-23. Admin UI panel (UI repo).
+22. Admin endpoints: books, authors, stock are DONE (2026-10-19). Still: orders (status change, tracking code) — after phase 3. Later maybe: delete orphaned old images when a cover is replaced; author delete (only when it has no books).
+23. Admin UI panel (UI repo): books + authors + stock DONE (2026-10-19). Still: orders screens.
 
 ### Phase 6 — Ready to sell
 24. Final header/footer, legal pages (terms, privacy, returns, shipping policy, contact), SEO basics, error pages.
-25. Security + deployment pass: HTTPS, CORS for the real domain, secrets outside the repo (remove the local `sa` password from `appsettings.json` — see DECISIONS 2026-10-11), rate limiting on OTP/login, backups of the database.
+25. Security + deployment pass: HTTPS, CORS for the real domain, secrets outside the repo (remove the local `sa` password from `appsettings.json` — see DECISIONS 2026-10-11), rate limiting on OTP/login, backups of the database, and the uploads folder (`Uploads:RootPath`) on a persistent disk/volume + backups (a redeploy of the container would delete uploaded covers).
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0013_books_is_active.sql` — adds `Books.IsActive`, updates all shop book procedures, new `Books_SetStock` / `Books_SetActive`, drops `Books_Delete`. Run after 0012 and BEFORE using the new API (every book read selects `IsActive`).
+- `Database/Migrations/0014_authors_management_procedures.sql` — `dbo.Authors_Insert`, `dbo.Authors_Update`. Run after 0013.
 - `Database/Migrations/0012_users_name.sql` — adds `Users.Name`, updates 3 read procedures, new `dbo.Users_SetName`. Run after 0011 and BEFORE using the new API (Register/GetById need the column).
 - `Database/Migrations/0010_create_auth_tables.sql` — `Users`, `OtpCodes`. Run before 0011.
 - `Database/Migrations/0011_auth_procedures.sql` — OTP + user procedures. After it, log in once through the API, then make yourself admin: `EXEC dbo.Users_SetRole @Mobile = N'09...', @Role = N'Admin';`.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-19) Admin panel contract (all need `Authorization: Bearer <Admin token>`; 401 not logged in, 403 not Admin, envelope):
+  - `GET BooksManagement/SearchBooks?q&authorId&sort&page=1&pageSize=20` → `data = { items, totalCount, page, pageSize }` like the shop search, but hidden books are included. `GET BooksManagement/GetBookById?id` → `data = book` (hidden too).
+  - Book objects carry `isActive` (bool). `POST BooksManagement/CreateBook` / `UpdateBook?id` bodies unchanged (`title, image, price, oldPrice, authorId, genre, language, description, stock, specs[]`); author must exist, strings have max lengths (title 200, image 200, genre/language 50, spec label 100 / value 200). `POST UpdateStock?id { stock }`, `POST SetBookActive?id { isActive }` → `isSuccess`. `DeleteBook`, `GetAllBooks`, `GetAllNewBooks` of BooksManagement are REMOVED.
+  - `POST AuthorsManagement/CreateAuthor` / `UpdateAuthor?id` `{ name, image, bio, genre }` → `data = author`. Authors are read with the public `Authors/*` endpoints.
+  - `POST ImagesManagement/UploadImage?folder=covers|authors` multipart field `file` (jpg/png/webp, max 2 MB) → `data = "/uploads/covers/<guid>.jpg"`; store it in `image`. Files are served by the API at `<api origin>/uploads/...` (UI pipe `apiImage`).
 - (DONE in API + UI 2026-10-13) Auth contract, all answer the envelope. Send `Authorization: Bearer <token>` on logged-in calls; 401 = not logged in, 403 = not Admin (both envelope).
   - `POST Auth/RequestOtp` `{ mobile }` (`09xxxxxxxxx`) → `isSuccess`; `false` + message when asked again within 1 min or >5 per hour. Code = 6 digits, valid 2 min. No SMS yet: the code is in the API console log.
   - `POST Auth/VerifyOtp` `{ mobile, code }` → `data = { token, expiresAt, user: { id, mobile, email, hasPassword, role } }`. New mobile = account created. 5 wrong codes lock that code.

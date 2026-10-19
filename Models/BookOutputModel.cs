@@ -15,6 +15,9 @@ namespace TheMorisakiBookshop.Models
         public int Stock { get; set; }
         public bool InStock { get; set; }
 
+        // false = hidden from the shop (only the admin panel sees hidden books).
+        public bool IsActive { get; set; }
+
         // Structured fields used for search/filtering/relating books, kept in
         // addition to (not instead of) the matching display rows in Specs.
         public int AuthorId { get; set; }

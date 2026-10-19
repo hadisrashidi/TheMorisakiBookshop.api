@@ -57,7 +57,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
         [HttpGet]
         public async Task<IActionResult> GetBookById(int id, CancellationToken cancellationToken)
         {
-            BookOutputModel? book = await _booksRepository.GetByIdAsync(id, cancellationToken);
+            BookOutputModel? book = await _booksRepository.GetByIdAsync(id, false, cancellationToken);
 
             if (book == null)
             {
@@ -126,7 +126,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
         [HttpGet]
         public async Task<IActionResult> SearchBooks(string? q, [FromQuery] List<string> genres, [FromQuery] List<string> languages, int? authorId, decimal? minPrice, decimal? maxPrice, string? sort, bool inStockOnly, CancellationToken cancellationToken, int page = 1, int pageSize = 9)
         {
-            BookSearchOutputModel results = await _booksRepository.SearchAsync(q, genres, languages, authorId, minPrice, maxPrice, inStockOnly, sort, page, pageSize, cancellationToken);
+            BookSearchOutputModel results = await _booksRepository.SearchAsync(q, genres, languages, authorId, minPrice, maxPrice, inStockOnly, sort, page, pageSize, false, cancellationToken);
 
             return Ok(new CustomActionResult<BookSearchOutputModel>
             {
