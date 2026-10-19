@@ -1,9 +1,7 @@
 using System.Data;
-using System.Text.Json;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using TheMorisakiBookshop.Models;
-using TheMorisakiBookshop.Models.Dto;
 
 namespace TheMorisakiBookshop.Repositories
 {
@@ -41,14 +39,12 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
-        // includeInactive: true only for the admin panel (hidden books are found too).
-        public async Task<BookOutputModel?> GetByIdAsync(int id, bool includeInactive, CancellationToken cancellationToken)
+        public async Task<BookOutputModel?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Id", id);
-                parameters.Add("@IncludeInactive", includeInactive);
 
                 CommandDefinition command = new CommandDefinition(
                     "dbo.Books_GetById",
@@ -184,8 +180,7 @@ namespace TheMorisakiBookshop.Repositories
         }
 
         // genres / languages: the stored procedure takes them as comma-separated text; an empty list means "no filter".
-        // includeInactive: true only for the admin panel (hidden books are listed too).
-        public async Task<BookSearchOutputModel> SearchAsync(string? query, List<string> genres, List<string> languages, int? authorId, decimal? minPrice, decimal? maxPrice, bool inStockOnly, string? sort, int page, int pageSize, bool includeInactive, CancellationToken cancellationToken)
+        public async Task<BookSearchOutputModel> SearchAsync(string? query, List<string> genres, List<string> languages, int? authorId, decimal? minPrice, decimal? maxPrice, bool inStockOnly, string? sort, int page, int pageSize, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -200,7 +195,6 @@ namespace TheMorisakiBookshop.Repositories
                 parameters.Add("@Sort", sort);
                 parameters.Add("@Page", page);
                 parameters.Add("@PageSize", pageSize);
-                parameters.Add("@IncludeInactive", includeInactive);
 
                 CommandDefinition command = new CommandDefinition(
                     "dbo.Books_Search",
@@ -246,107 +240,6 @@ namespace TheMorisakiBookshop.Repositories
 
                     return filters;
                 }
-            }
-        }
-
-        // Returns the new Id. Specs travel as JSON text; the procedure saves book + specs in one transaction.
-        public async Task<int> InsertAsync(CreateBookRequestModel request, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Title", request.Title);
-                parameters.Add("@AuthorId", request.AuthorId);
-                parameters.Add("@Price", request.Price);
-                parameters.Add("@OldPrice", request.OldPrice);
-                parameters.Add("@Stock", request.Stock);
-                parameters.Add("@Image", request.Image);
-                parameters.Add("@Description", request.Description);
-                parameters.Add("@Genre", request.Genre);
-                parameters.Add("@Language", request.Language);
-                parameters.Add("@Specs", JsonSerializer.Serialize(request.Specs));
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_Insert",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int newId = await connection.ExecuteScalarAsync<int>(command);
-
-                return newId;
-            }
-        }
-
-        // Returns false when the book does not exist.
-        public async Task<bool> UpdateAsync(int id, UpdateBookRequestModel request, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-                parameters.Add("@Title", request.Title);
-                parameters.Add("@AuthorId", request.AuthorId);
-                parameters.Add("@Price", request.Price);
-                parameters.Add("@OldPrice", request.OldPrice);
-                parameters.Add("@Stock", request.Stock);
-                parameters.Add("@Image", request.Image);
-                parameters.Add("@Description", request.Description);
-                parameters.Add("@Genre", request.Genre);
-                parameters.Add("@Language", request.Language);
-                parameters.Add("@Specs", JsonSerializer.Serialize(request.Specs));
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_Update",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
-
-                return affectedRows > 0;
-            }
-        }
-
-        // Returns false when the book does not exist.
-        public async Task<bool> SetStockAsync(int id, int stock, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-                parameters.Add("@Stock", stock);
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_SetStock",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
-
-                return affectedRows > 0;
-            }
-        }
-
-        // Shows or hides a book in the shop. Returns false when the book does not exist.
-        public async Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-                parameters.Add("@IsActive", isActive);
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_SetActive",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
-
-                return affectedRows > 0;
             }
         }
 

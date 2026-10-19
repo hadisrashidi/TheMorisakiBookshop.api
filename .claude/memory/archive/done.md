@@ -2,7 +2,7 @@
 2026-10-12: Task 4 — stored procedure scripts 0004-0007 written (Authors, BookSpecs, Books, Reviews).
 2026-10-12: Task 2 — she started Docker SQL Server and ran 0001-0003 successfully.
 <!-- newest on top: YYYY-MM-DD: task -->
-2026-10-19: Task 21 (UI sends the token) + admin API for tasks 22/23 (books, stock, authors, image upload, hide instead of delete) — scripts 0013-0014, orders admin still open.
+2026-10-19: Task 21 + admin for tasks 22/23 (books, stock, authors, image upload, hide instead of delete) — built in the separate repos `TheMorisakiBookshop.admin.api` / `.admin.ui`; shop keeps scripts 0013-0014; orders admin still open.
 2026-10-13: Task 5 — `Data/*.json` and the csproj item deleted.
 2026-10-13: Tasks 11-14 (API side) — OTP + email/password login, JWT, `Users`, roles, Admin protection on `BooksManagementController` (task 21 protection part done). SMS is a mock.
 2026-10-12: Task 8b — `Books_GetFilters` + `GET Books/GetSearchFilters` (script 0009); UI search uses it. She ran 0008 OK.
