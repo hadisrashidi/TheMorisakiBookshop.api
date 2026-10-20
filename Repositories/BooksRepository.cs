@@ -1,9 +1,7 @@
 using System.Data;
-using System.Text.Json;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using TheMorisakiBookshop.Models;
-using TheMorisakiBookshop.Models.Dto;
 
 namespace TheMorisakiBookshop.Repositories
 {
@@ -242,85 +240,6 @@ namespace TheMorisakiBookshop.Repositories
 
                     return filters;
                 }
-            }
-        }
-
-        // Returns the new Id. Specs travel as JSON text; the procedure saves book + specs in one transaction.
-        public async Task<int> InsertAsync(CreateBookRequestModel request, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Title", request.Title);
-                parameters.Add("@AuthorId", request.AuthorId);
-                parameters.Add("@Price", request.Price);
-                parameters.Add("@OldPrice", request.OldPrice);
-                parameters.Add("@Stock", request.Stock);
-                parameters.Add("@Image", request.Image);
-                parameters.Add("@Description", request.Description);
-                parameters.Add("@Genre", request.Genre);
-                parameters.Add("@Language", request.Language);
-                parameters.Add("@Specs", JsonSerializer.Serialize(request.Specs));
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_Insert",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int newId = await connection.ExecuteScalarAsync<int>(command);
-
-                return newId;
-            }
-        }
-
-        // Returns false when the book does not exist.
-        public async Task<bool> UpdateAsync(int id, UpdateBookRequestModel request, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-                parameters.Add("@Title", request.Title);
-                parameters.Add("@AuthorId", request.AuthorId);
-                parameters.Add("@Price", request.Price);
-                parameters.Add("@OldPrice", request.OldPrice);
-                parameters.Add("@Stock", request.Stock);
-                parameters.Add("@Image", request.Image);
-                parameters.Add("@Description", request.Description);
-                parameters.Add("@Genre", request.Genre);
-                parameters.Add("@Language", request.Language);
-                parameters.Add("@Specs", JsonSerializer.Serialize(request.Specs));
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_Update",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
-
-                return affectedRows > 0;
-            }
-        }
-
-        // Returns false when the book does not exist.
-        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-
-                CommandDefinition command = new CommandDefinition(
-                    "dbo.Books_Delete",
-                    parameters,
-                    commandType: CommandType.StoredProcedure,
-                    cancellationToken: cancellationToken);
-
-                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
-
-                return affectedRows > 0;
             }
         }
 
