@@ -34,17 +34,10 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0017_orders_admin_procedures.sql` — `dbo.Orders_Search`, `dbo.Orders_GetById` (read only, used by the admin API orders screens). Run after 0016.
-- `Database/Migrations/0015_create_orders_tables.sql` — `dbo.Orders`, `dbo.OrderLines`. Run after 0014. Before using `Orders/*`.
-- `Database/Migrations/0016_orders_procedures.sql` — `dbo.Orders_Place`, `dbo.Orders_GetByUserId`. Run after 0015.
-- `Database/Migrations/0013_books_is_active.sql` — adds `Books.IsActive`, updates all shop book procedures, new `Books_SetStock` / `Books_SetActive`, drops `Books_Delete`. Run after 0012 and BEFORE using the new API (every book read selects `IsActive`). Also needed by the admin API.
-- `Database/Migrations/0014_authors_management_procedures.sql` — `dbo.Authors_Insert`, `dbo.Authors_Update` (used by the admin API). Run after 0013.
-- `Database/Migrations/0012_users_name.sql` — adds `Users.Name`, updates 3 read procedures, new `dbo.Users_SetName`. Run after 0011 and BEFORE using the new API (Register/GetById need the column).
-- `Database/Migrations/0010_create_auth_tables.sql` — `Users`, `OtpCodes`. Run before 0011.
-- `Database/Migrations/0011_auth_procedures.sql` — OTP + user procedures. After it, log in once through the API, then make yourself admin: `EXEC dbo.Users_SetRole @Mobile = N'09...', @Role = N'Admin';`.
+- (none) She ran 0010-0018 (checked 2026-10-24).
 
 ## For the UI repo
-- (DONE in API 2026-10-21, UI not yet = UI BACKLOG task 6) Orders contract, answers the envelope, both need the token (401 otherwise):
+- (DONE in API + UI 2026-10-21) Orders contract, answers the envelope, both need the token (401 otherwise):
   - `POST Orders/PlaceOrder { recipientName, recipientMobile (09xxxxxxxxx), address, postalCode ("" or 10 digits), lines: [{ bookId, quantity (1-20) }] }` -> `data = orderId` (int). `isSuccess: false` + Persian message when a book is hidden/missing or stock is not enough (nothing is saved, no stock taken). Prices come from the database, the UI sends NO price. Order status starts `PendingPayment`.
   - `GET Orders/GetMyOrders` -> `data = [ { id, status, subtotal, shippingCost, total, recipientName, recipientMobile, address, postalCode, trackingCode, createdAt (ISO, UTC), lines: [ { bookId, title, image, unitPrice, quantity } ] } ]`, newest first. `status` is one of `PendingPayment | Paid | Packed | Shipped | Delivered | Cancelled` (UI maps to Persian). The old local `Order` model (string id, Jalali date) must be replaced; `createdAt` -> Jalali in the UI.
   - Checkout must collect the recipient (name, mobile, address): the UI addresses page is still localStorage, pick the default address there for now.
