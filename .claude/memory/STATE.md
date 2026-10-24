@@ -16,7 +16,7 @@ Onboarding: done (2026-10-07)
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she runs 0015 + 0016); next the shop UI checkout (UI BACKLOG task 6), then the admin orders screens (admin repos, read only first).
+- Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0017); next the shop UI checkout (UI BACKLOG task 6), then the admin orders screens (admin repos, read only first).
 
 ## Session log
 ### 2026-10-21 — Phase 3 start: orders API (web session, branch `claude/gifted-curie-7qha13`; admin repos attached but untouched)
@@ -24,7 +24,8 @@ Onboarding: done (2026-10-07)
 - Did: scripts `0015_create_orders_tables.sql`, `0016_orders_procedures.sql`; C#: `OrdersController`, `OrdersRepository`, `OrderOutputModel`, `OrderLineOutputModel`, `OrderPlacedModel`, `PlaceOrderRequestModel`, `OrderLineRequestModel`, `OrdersRepository` registered in `Program.cs`. Contract in "For the UI repo".
 - Verified: `dotnet build` 0 warnings (installed .NET 8 SDK in the VM with apt); both endpoints answer the 401 envelope without a token. NOT verified: scripts 0015-0016 never run (no SQL Server here), no real order round trip.
 - Follow-up (same day): she ran 0012-0016. UI checkout + orders page now call the API (UI repo, same branch). Wrote `0017_orders_admin_procedures.sql` (`Orders_Search` paged + filters, `Orders_GetById`) for the admin repos (`OrdersController` there: `SearchOrders`, `GetOrderById`, read only). Her request: "see the shop orders in the admin panel". NOT verified: 0017 never run, no real database round trip.
-- Next: she runs 0017; admin status change + tracking code need script 0018 (Orders_SetStatus, tracking code) — ask her first; payment (phase 4).
+- She ran 0017 (OK, 2026-10-24). Her follow-up wishes: book titles in the admin orders table, stock check when adding to the cart, live admin list -> script `0018_orders_search_book_titles.sql` (`Orders_Search` + `BookTitles` via `STRING_AGG`, search matches a book title); the other two are UI/admin work. NOT verified: 0018 never run.
+- Next: she runs 0018; admin status change + tracking code need script 0018 (Orders_SetStatus, tracking code) — ask her first; payment (phase 4).
 ### 2026-10-19 — Admin panel: books, stock, authors, image upload (web session, branch `claude/loving-gauss-lh47dz`; admin code later moved to the new admin repos)
 - Her choices: upload covers from the panel; hide books (`IsActive`) instead of deleting; add/edit authors too (DECISIONS 2026-10-19).
 - Did: scripts `0013_books_is_active.sql` (column, all shop procedures filter active, `Books_Search`/`Books_GetById` take `@IncludeInactive`, new `Books_SetStock`/`Books_SetActive`, `Books_Delete` dropped) and `0014_authors_management_procedures.sql`. C#: `BookOutputModel.IsActive`, `BooksRepository` (includeInactive flag, `SetStockAsync`, `SetActiveAsync`, delete removed), `AuthorsRepository` insert/update, `BooksManagementController` rewritten, new `AuthorsManagementController`, `ImagesManagementController`, `Storage/ImageStorage`, request models, `MaxLength` on book/author DTOs (+ removed duplicate `MinLength(1)` next to `[Required]`), author must exist on create/update book (Persian message instead of a 500).

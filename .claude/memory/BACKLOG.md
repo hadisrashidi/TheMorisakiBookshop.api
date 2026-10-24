@@ -34,9 +34,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0017_orders_admin_procedures.sql` — `dbo.Orders_Search`, `dbo.Orders_GetById` (read only, used by the admin API orders screens). Run after 0016.
-- `Database/Migrations/0015_create_orders_tables.sql` — `dbo.Orders`, `dbo.OrderLines`. Run after 0014. Before using `Orders/*`.
-- `Database/Migrations/0016_orders_procedures.sql` — `dbo.Orders_Place`, `dbo.Orders_GetByUserId`. Run after 0015.
+- `Database/Migrations/0018_orders_search_book_titles.sql` — replaces `dbo.Orders_Search` (adds `BookTitles`, search also matches a book title). Run after 0017 (she ran 0017 on 2026-10-24).
 - `Database/Migrations/0013_books_is_active.sql` — adds `Books.IsActive`, updates all shop book procedures, new `Books_SetStock` / `Books_SetActive`, drops `Books_Delete`. Run after 0012 and BEFORE using the new API (every book read selects `IsActive`). Also needed by the admin API.
 - `Database/Migrations/0014_authors_management_procedures.sql` — `dbo.Authors_Insert`, `dbo.Authors_Update` (used by the admin API). Run after 0013.
 - `Database/Migrations/0012_users_name.sql` — adds `Users.Name`, updates 3 read procedures, new `dbo.Users_SetName`. Run after 0011 and BEFORE using the new API (Register/GetById need the column).
