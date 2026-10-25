@@ -21,12 +21,12 @@
 
 ### Phase 4 — Payment and shipping
 18. Payment gateway (Iranian, e.g. Zarinpal or IDPay — she checks the production requirements: domain, enamad). Flow: create payment → redirect → verify callback → mark order paid. Never trust the browser for "paid".
-19. Order statuses (pending payment, paid, packed, shipped, delivered, cancelled) + shipping methods and prices + tracking code field.
+19. Shipping methods and prices (order statuses + tracking code are DONE 2026-10-25, script 0019).
 20. Stock release for unpaid/cancelled orders (timeout rule) — decide with her.
 
 ### Phase 5 — Admin (required before public launch)
-22. Admin endpoints: books, authors, stock are DONE (2026-10-19) in the SEPARATE repo `TheMorisakiBookshop.admin.api`. Still: orders (status change, tracking code) — there, after phase 3.
-23. Admin UI panel: books + authors + stock DONE (2026-10-19) in `TheMorisakiBookshop.admin.ui`. Still: orders screens.
+22. Admin endpoints: books, authors, stock, orders (list, details, status + tracking code) are DONE in the SEPARATE repo `TheMorisakiBookshop.admin.api`. Still: refund / return handling after delivery (business rule, task 26).
+23. Admin UI panel: books, authors, stock, orders (list, details, status buttons) DONE in `TheMorisakiBookshop.admin.ui`.
 
 ### Phase 6 — Ready to sell
 24. Final header/footer, legal pages (terms, privacy, returns, shipping policy, contact), SEO basics, error pages.
@@ -34,7 +34,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0018 (checked 2026-10-24).
+- `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo
 - (DONE in API + UI 2026-10-21) Orders contract, answers the envelope, both need the token (401 otherwise):
