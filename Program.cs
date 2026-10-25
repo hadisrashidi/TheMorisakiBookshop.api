@@ -166,6 +166,7 @@ namespace TheMorisakiBookshop
             string uploadsConfigured = builder.Configuration["Uploads:RootPath"] ?? "../uploads";
             string uploadsPath = Path.Combine(builder.Environment.ContentRootPath, uploadsConfigured);
             Directory.CreateDirectory(uploadsPath);
+            app.Logger.LogInformation("Uploads folder (must be the same folder the admin API writes to): {Path}", Path.GetFullPath(uploadsPath));
 
             app.UseStaticFiles(new StaticFileOptions
             {
