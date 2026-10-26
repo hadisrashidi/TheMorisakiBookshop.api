@@ -1,4 +1,13 @@
 # Archived sessions
+### 2026-10-13 — Phase 2 API: OTP + email/password login, JWT, roles (web session, branch `claude/adoring-rubin-tb785m`)
+- Did: deleted `Data/*.json` + csproj item (her OK). Added NuGet `Microsoft.AspNetCore.Authentication.JwtBearer` 8.0.31 (her OK). Scripts `0010_create_auth_tables.sql` (Users, OtpCodes), `0011_auth_procedures.sql` (OTP create/verify with limits, user procs, `Users_SetRole`). C#: `AuthController`, `UsersRepository`, `OtpCodesRepository`, `Security/*`, request/output models, `Program.cs` JWT + 401/403 envelope, `[Authorize(Roles = "Admin")]` on `BooksManagementController`. `Jwt:Key` only in `appsettings.Development.json`.
+- Verified: `dotnet build` 0 warnings; app starts; admin endpoint = 401 envelope without token, 403 with a Customer token, passes auth with an Admin token; bad mobile = 400 envelope. NOT verified: scripts 0010-0011 never run (no SQL Server here), no real OTP/login round trip.
+- Follow-up: she could not find the code in the log → Development-only `Sms:ShowCodeInResponse` shows it in `message` of `RequestOtp` (DECISIONS). Build ok, not run.
+- She ran 0010-0011: OTP login works (user 1 created). Then: Swagger "Authorize" button (`AddSecurityDefinition` in `Program.cs`) and UI login screens (UI repo, same branch). She has no direct repo access on her work PC: delivery = branch ZIP via the VM; list changed/added/deleted files at the end of each reply.
+- Next: she makes herself Admin (`Users_SetRole`), tests the UI login against the real API.
+- Follow-up: all API messages + validation errors translated to Persian (see DECISIONS); build ok, 400/401 verified with curl. Then `Auth/Register` added (email + password sign-up, DECISIONS); build ok, not run against a DB.
+- Follow-up: `RememberMe` on the three login endpoints (30-day token, DECISIONS); build ok, not run against a DB.
+- Follow-up: `Users.Name` (script 0012), `Register` takes `name`, `Auth/UpdateProfile`; build ok, script not run.
 ### 2026-10-12 — Task 8b: search filters endpoint (web session, same branch)
 - Did: she ran 0008, search works. Wrote `0009_books_filters_procedure.sql`, `BookFiltersOutputModel`, `BooksRepository.GetFiltersAsync`, `Books/GetSearchFilters`; UI search page now takes genres/languages from it and has author + price filters.
 - Verified: `dotnet build` 0 warnings, UI build ok. NOT verified: 0009 never run, no browser test.

@@ -17,12 +17,12 @@
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
 ### Phase 3 — Cart, orders, stock
-15. Cart stored per user in DB; guest cart stays in UI localStorage and is merged into the server cart right after login (decided 2026-10-07).
+(done: orders, addresses, server cart 2026-10-26)
 
 ### Phase 4 — Payment and shipping
 18. Payment gateway (Iranian, e.g. Zarinpal or IDPay — she checks the production requirements: domain, enamad). Flow: create payment → redirect → verify callback → mark order paid. Never trust the browser for "paid".
 19. Shipping methods and prices (order statuses + tracking code are DONE 2026-10-25, script 0019).
-20. Stock release for unpaid/cancelled orders (timeout rule) — decide with her.
+20. Stock release for unpaid orders (timeout rule). WAIT for the payment gateway (task 18): until then "Paid" is set by hand in the admin, so a timer would cancel orders before she confirms them (decided 2026-10-26).
 
 ### Phase 5 — Admin (required before public launch)
 22. Admin endpoints: books, authors, stock, orders (list, details, status + tracking code) are DONE in the SEPARATE repo `TheMorisakiBookshop.admin.api`. Still: refund / return handling after delivery (business rule, task 26).
@@ -34,10 +34,15 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0020_addresses.sql` — table `dbo.Addresses` + procedures `Addresses_GetByUserId/Insert/Update/Delete/SetDefault`. Run after 0019. Needed by `Addresses/*`.
+- `Database/Migrations/0021_cart.sql` — table `dbo.CartItems` + procedures `CartItems_GetByUserId/SetQuantity/Merge/Clear`. Run after 0020 (she ran 0020, 2026-10-26). Needed by `Cart/*`.
 - `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-26) Cart contract, answers the envelope, all need the token:
+  - `GET Cart/GetMyCart` -> `data = [ { id (bookId), title, image, price, oldPrice (null = none), stock, quantity } ]`, in the order added; hidden books are left out; price/stock are always current.
+  - `POST Cart/SetQuantity { bookId, quantity (0-20) }` -> `isSuccess`; quantity 0 removes the book; `false` + Persian message when the book is missing/hidden. The UI checks stock itself when adding (`addCheckedToCart`); the API checks again at order time.
+  - `POST Cart/MergeCart { lines: [{ bookId, quantity }] }` -> `isSuccess`. Called once right after login with the guest cart: same book in both = quantities added (max 20); hidden/missing books skipped.
+  - `POST Cart/ClearCart` -> `isSuccess` (after a successful order).
 - (DONE in API + UI 2026-10-26) Addresses contract, answers the envelope, all need the token (401 otherwise):
   - `GET Addresses/GetMyAddresses` -> `data = [ { id, title, recipient, phone, city, fullAddress, postalCode, isDefault } ]`, default first.
   - `POST Addresses/AddAddress { title, recipient, phone ("" or 09xxxxxxxxx), city, fullAddress, postalCode ("" or 10 digits), isDefault }` -> `data = id`. The first address of a user is always the default.
