@@ -137,6 +137,27 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        public async Task<bool> SetProfileAsync(int id, string name, string birthdate, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                parameters.Add("@Name", name);
+                parameters.Add("@Birthdate", birthdate);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_SetProfile",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
+
+                return affectedRows > 0;
+            }
+        }
+
         public async Task<bool> SetNameAsync(int id, string name, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))

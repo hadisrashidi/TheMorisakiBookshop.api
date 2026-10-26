@@ -13,7 +13,7 @@
 ### Phase 2 — Accounts
 11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
 12. Refresh tokens / revoke a stolen long "remember me" token (30 days) — with task 25. Password-login lockout per account DONE 2026-10-26 (script 0022). Still open: the SAME lockout in the admin API login (separate repo, it needs `Users_RegisterFailedLogin` / `Users_ClearFailedLogins` from 0022), and a per-IP rate limit (needs the real proxy setup, task 25).
-13. Profile (name/birthdate/avatar) from UI localStorage to the API (addresses DONE 2026-10-26).
+13. Profile: name + birthdate are on the API (2026-10-26); only the avatar photo (data URL in UI localStorage) is left — needs an upload design (decide with her).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
 ### Phase 3 — Cart, orders, stock
@@ -34,10 +34,12 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0023_users_birthdate.sql` — `Users.Birthdate`, user read procedures redefined (keep lockout columns), new `Users_SetProfile`. Run after 0022. Needed by `Auth/UpdateProfile` (it now calls `Users_SetProfile`, so run it before using the profile page).
 - `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
 - `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-26) User objects carry `birthdate` (Jalali text `1372/05/12` or null). `POST Auth/UpdateProfile { name (2-100), birthdate ("" or yyyy/MM/dd) }` -> `data = user`. ALWAYS send both fields: an empty `birthdate` clears it. Needs script 0023.
 - (DONE in API + UI 2026-10-26) Cart contract, answers the envelope, all need the token:
   - `GET Cart/GetMyCart` -> `data = [ { id (bookId), title, image, price, oldPrice (null = none), stock, quantity } ]`, in the order added; hidden books are left out; price/stock are always current.
   - `POST Cart/SetQuantity { bookId, quantity (0-20) }` -> `isSuccess`; quantity 0 removes the book; `false` + Persian message when the book is missing/hidden. The UI checks stock itself when adding (`addCheckedToCart`); the API checks again at order time.

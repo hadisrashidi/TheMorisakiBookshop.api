@@ -22,6 +22,10 @@ Onboarding: done (2026-10-07)
 - Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0018); shop UI checkout and the read-only admin orders screens are done (admin repos); next status change / tracking code + payment (phase 4).
 
 ## Session log
+### 2026-10-26 (4) — Profile birthdate on the server (web session, same branch, API + UI)
+- Order chosen by me (she said so): lockout (done above) -> profile -> reviews -> UI polish. Did: `0023_users_birthdate.sql`, `UserModel` / `UserOutputModel` / `JwtTokenService.ToOutputModel` (+ `Birthdate`), `UpdateProfileRequestModel.Birthdate`, `UsersRepository.SetProfileAsync`, `AuthController.UpdateProfile`. UI: `UserModel.birthdate`, `UpdateProfileRequestModel.birthdate`, profile page saves name + birthdate, login moves a local birthdate to an account without one.
+- Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0022 and 0023 never run, no browser test.
+- Next: she runs 0022 + 0023. Avatar stays in the browser.
 ### 2026-10-26 (3) — Password-login lockout (web session, same branch)
 - She ran 0021. Asked her what next (options: lockout / profile / reviews / UI polish); she chose lockout, then said "do the rest in the order you think is right". Did: `0022_login_lockout.sql`, `UserModel` (+ `FailedLoginCount`, `LockedMinutesLeft`), `UsersRepository` (2 methods), `AuthController.LoginWithPassword` + `GetLockedMessage`. Contract unchanged (same envelope, new Persian message when locked).
 - Verified: `dotnet build` 0 warnings. NOT verified: 0022 never run, no real wrong-password round trip.
@@ -42,7 +46,3 @@ Onboarding: done (2026-10-07)
 - She ran 0017 (OK, 2026-10-24). Her follow-up wishes: book titles in the admin orders table, stock check when adding to the cart, live admin list -> script `0018_orders_search_book_titles.sql` (`Orders_Search` + `BookTitles` via `STRING_AGG`, search matches a book title); the other two are UI/admin work. NOT verified: 0018 never run.
 - She ran 0018 and tested book titles, the add-to-cart stock check and the live admin list: OK (2026-10-24).
 - Next: she runs 0019.
-### 2026-10-25 — Status change, search-as-you-type, empty cart/favourites, upload report (web session, same branch, all four repos)
-- Her answers: payment gateway NOT now; order status flow = "whatever you decided" (DECISIONS 2026-10-25). Did: script `0019_orders_set_status.sql` (`Orders_SetStatus`); both APIs now log the uploads folder at startup (`Uploads folder ...`). admin API: `POST Orders/UpdateOrderStatus?id { status, trackingCode? }`. UI: back to home when the cart / favourites become empty; admin lists search while typing (400 ms, like the shop header), authors list filters at once, order page status buttons.
-- Her report: images uploaded in the admin do not show in the shop. Checked: with both APIs next to each other (`../uploads`) an upload through the admin API is served by the shop API (png / jpg / webp all 200 with the right type), and every shop `<img>` goes through `apiImage` -> the code is fine; cause = the two APIs write / read DIFFERENT folders on her machine. She compares the two `Uploads folder` log lines and, if they differ, sets the same absolute `Uploads:RootPath` in both `appsettings.Development.json`. Not changed in code (her machine, her choice of path).
-- Verified: both APIs `dotnet build` 0 warnings; script 0019 never run (no SQL Server here).

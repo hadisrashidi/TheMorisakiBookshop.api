@@ -215,7 +215,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
         {
             int userId = GetCurrentUserId();
 
-            bool saved = await _usersRepository.SetNameAsync(userId, request.Name.Trim(), cancellationToken);
+            bool saved = await _usersRepository.SetProfileAsync(userId, request.Name.Trim(), request.Birthdate, cancellationToken);
 
             if (saved == false)
             {
