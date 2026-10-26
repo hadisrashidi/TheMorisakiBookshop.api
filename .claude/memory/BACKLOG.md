@@ -13,7 +13,7 @@
 ### Phase 2 — Accounts
 11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
 12. Refresh tokens / revoke a stolen long "remember me" token (30 days) + rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
-13. Profile/addresses: tables `Addresses`; endpoints replace UI localStorage (`Users` already exists).
+13. Profile (name/birthdate/avatar) from UI localStorage to the API (addresses DONE 2026-10-26).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
 ### Phase 3 — Cart, orders, stock
@@ -34,9 +34,14 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0020_addresses.sql` — table `dbo.Addresses` + procedures `Addresses_GetByUserId/Insert/Update/Delete/SetDefault`. Run after 0019. Needed by `Addresses/*`.
 - `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-26) Addresses contract, answers the envelope, all need the token (401 otherwise):
+  - `GET Addresses/GetMyAddresses` -> `data = [ { id, title, recipient, phone, city, fullAddress, postalCode, isDefault } ]`, default first.
+  - `POST Addresses/AddAddress { title, recipient, phone ("" or 09xxxxxxxxx), city, fullAddress, postalCode ("" or 10 digits), isDefault }` -> `data = id`. The first address of a user is always the default.
+  - `POST Addresses/UpdateAddress?id` (same body), `POST Addresses/DeleteAddress?id`, `POST Addresses/SetDefaultAddress?id` -> `isSuccess`; `false` + Persian message when the id is not found or belongs to another user. Deleting the default makes the oldest remaining one the default.
 - (DONE in API + UI 2026-10-21) Orders contract, answers the envelope, both need the token (401 otherwise):
   - `POST Orders/PlaceOrder { recipientName, recipientMobile (09xxxxxxxxx), address, postalCode ("" or 10 digits), lines: [{ bookId, quantity (1-20) }] }` -> `data = orderId` (int). `isSuccess: false` + Persian message when a book is hidden/missing or stock is not enough (nothing is saved, no stock taken). Prices come from the database, the UI sends NO price. Order status starts `PendingPayment`.
   - `GET Orders/GetMyOrders` -> `data = [ { id, status, subtotal, shippingCost, total, recipientName, recipientMobile, address, postalCode, trackingCode, createdAt (ISO, UTC), lines: [ { bookId, title, image, unitPrice, quantity } ] } ]`, newest first. `status` is one of `PendingPayment | Paid | Packed | Shipped | Delivered | Cancelled` (UI maps to Persian). The old local `Order` model (string id, Jalali date) must be replaced; `createdAt` -> Jalali in the UI.

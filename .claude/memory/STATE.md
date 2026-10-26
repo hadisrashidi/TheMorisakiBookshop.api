@@ -13,12 +13,17 @@ Onboarding: done (2026-10-07)
 - Auth (code written 2026-10-13, scripts 0010-0011 not run yet): `Controllers/Shop/AuthController.cs` (`RequestOtp`, `VerifyOtp`, `LoginWithPassword`, `SetCredentials`, `ResetPassword`, `GetMe`), JWT bearer (`Program.cs`, `Security/JwtTokenService.cs`), `Security/OtpService.cs`, `PasswordService.cs` (PBKDF2), `SmsSender.cs` (MOCK: code only in the log). `BooksManagementController` needs role `Admin`. Tables `Users`, `OtpCodes`.
 - Admin: separate repos `TheMorisakiBookshop.admin.api` / `.admin.ui` (same database; THIS repo owns all SQL scripts). Shop side: `Books.IsActive` (hidden books; script 0013, not run yet), shop procedures return active books only; `Program.cs` serves the uploads folder `Uploads:RootPath` (default `../uploads`) at `/uploads` — must be the same folder the admin API writes to.
 - Orders (2026-10-21, scripts 0015-0018 run and tested by her 2026-10-24): `Controllers/Shop/OrdersController.cs` (`PlaceOrder`, `GetMyOrders`, both `[Authorize]`), `Repositories/OrdersRepository.cs`, tables `Orders`, `OrderLines`. Status starts `PendingPayment`, no payment yet.
+- Addresses (2026-10-26, script 0020 NOT run yet): `Controllers/Shop/AddressesController.cs` (`GetMyAddresses`, `AddAddress`, `UpdateAddress`, `DeleteAddress`, `SetDefaultAddress`, all `[Authorize]`), `Repositories/AddressesRepository.cs`, table `Addresses`.
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
 - Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0018); shop UI checkout and the read-only admin orders screens are done (admin repos); next status change / tracking code + payment (phase 4).
 
 ## Session log
+### 2026-10-26 — Addresses on the server (web session, branch `claude/lucid-faraday-5ab9od`, API + UI)
+- Her choice: start task 13 (addresses) after "next task" options. Did: script `0020_addresses.sql`; `AddressOutputModel`, `SaveAddressRequestModel`, `AddressesRepository`, `AddressesController`, registered in `Program.cs`. UI: `AddressesApiService`, `AddressesService` rewritten (server list in a signal, one-time upload of old localStorage addresses), addresses page async + `isSaving`, cart loads addresses before checkout; models `address.response.model.ts` / `save-address.request.model.ts` (old `address.model.ts` removed).
+- Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: script 0020 never run (no SQL Server here), no browser test, no real round trip.
+- Next: she runs 0020, tests addresses page + checkout.
 ### 2026-10-21 — Phase 3 start: orders API (web session, branch `claude/gifted-curie-7qha13`; admin repos attached but untouched)
 - Her request: an orders section in the admin panel. Found: no orders exist (shop checkout is fake, localStorage) -> order of work: shop orders API, shop UI checkout, then admin list. She agreed with: cart stays in localStorage, status `PendingPayment` (DECISIONS 2026-10-21).
 - Did: scripts `0015_create_orders_tables.sql`, `0016_orders_procedures.sql`; C#: `OrdersController`, `OrdersRepository`, `OrderOutputModel`, `OrderLineOutputModel`, `OrderPlacedModel`, `PlaceOrderRequestModel`, `OrderLineRequestModel`, `OrdersRepository` registered in `Program.cs`. Contract in "For the UI repo".
@@ -46,7 +51,3 @@ Onboarding: done (2026-10-07)
 - Follow-up: all API messages + validation errors translated to Persian (see DECISIONS); build ok, 400/401 verified with curl. Then `Auth/Register` added (email + password sign-up, DECISIONS); build ok, not run against a DB.
 - Follow-up: `RememberMe` on the three login endpoints (30-day token, DECISIONS); build ok, not run against a DB.
 - Follow-up: `Users.Name` (script 0012), `Register` takes `name`, `Auth/UpdateProfile`; build ok, script not run.
-### 2026-10-12 — Task 8b: search filters endpoint (web session, same branch)
-- Did: she ran 0008, search works. Wrote `0009_books_filters_procedure.sql`, `BookFiltersOutputModel`, `BooksRepository.GetFiltersAsync`, `Books/GetSearchFilters`; UI search page now takes genres/languages from it and has author + price filters.
-- Verified: `dotnet build` 0 warnings, UI build ok. NOT verified: 0009 never run, no browser test.
-- Next: she runs 0009; delete `Data/*.json` (her OK); then phase 2 decisions (SMS provider, OTP rules).
