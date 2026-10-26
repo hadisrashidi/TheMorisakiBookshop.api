@@ -34,7 +34,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
+- (none) She ran 0010-0019 (0019 on 2026-10-26).
 
 ## For the UI repo
 - (DONE in API + UI 2026-10-21) Orders contract, answers the envelope, both need the token (401 otherwise):
