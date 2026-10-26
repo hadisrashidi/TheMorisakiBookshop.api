@@ -12,7 +12,7 @@
 
 ### Phase 2 — Accounts
 11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
-12. Refresh tokens / revoke a stolen long "remember me" token (30 days) + rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
+12. Refresh tokens / revoke a stolen long "remember me" token (30 days) — with task 25. Password-login lockout per account DONE 2026-10-26 (script 0022). Still open: the SAME lockout in the admin API login (separate repo, it needs `Users_RegisterFailedLogin` / `Users_ClearFailedLogins` from 0022), and a per-IP rate limit (needs the real proxy setup, task 25).
 13. Profile (name/birthdate/avatar) from UI localStorage to the API (addresses DONE 2026-10-26).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
@@ -34,7 +34,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- `Database/Migrations/0021_cart.sql` — table `dbo.CartItems` + procedures `CartItems_GetByUserId/SetQuantity/Merge/Clear`. Run after 0020 (she ran 0020, 2026-10-26). Needed by `Cart/*`.
+- `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
 - `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo

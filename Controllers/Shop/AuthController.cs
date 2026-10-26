@@ -131,13 +131,34 @@ namespace TheMorisakiBookshop.Controllers.Shop
             UserModel? user = await _usersRepository.GetByEmailAsync(request.Email, cancellationToken);
 
             // Same message for "no such email" and "wrong password", so nobody can probe which emails exist.
-            bool passwordIsRight = user != null
-                && user.PasswordHash != null
-                && _passwordService.Verify(request.Password, user.PasswordHash);
-
-            if (user == null || passwordIsRight == false)
+            if (user == null || user.PasswordHash == null)
             {
                 return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "ایمیل یا رمز عبور نادرست است." });
+            }
+
+            // While the account is locked even the right password is refused.
+            if (user.LockedMinutesLeft > 0)
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = GetLockedMessage(user.LockedMinutesLeft) });
+            }
+
+            bool passwordIsRight = _passwordService.Verify(request.Password, user.PasswordHash);
+
+            if (passwordIsRight == false)
+            {
+                int lockedMinutesLeft = await _usersRepository.RegisterFailedLoginAsync(user.Id, cancellationToken);
+
+                if (lockedMinutesLeft > 0)
+                {
+                    return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = GetLockedMessage(lockedMinutesLeft) });
+                }
+
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = "ایمیل یا رمز عبور نادرست است." });
+            }
+
+            if (user.FailedLoginCount > 0)
+            {
+                await _usersRepository.ClearFailedLoginsAsync(user.Id, cancellationToken);
             }
 
             AuthTokenOutputModel token = _jwtTokenService.CreateToken(user, request.RememberMe);
@@ -233,6 +254,11 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 IsSuccess = true,
                 Data = _jwtTokenService.ToOutputModel(user)
             });
+        }
+
+        private string GetLockedMessage(int minutes)
+        {
+            return $"به دلیل چند بار رمز اشتباه، ورود با رمز عبور تا {minutes} دقیقه‌ی دیگر بسته است. با کد پیامکی وارد شوید یا رمز را بازیابی کنید.";
         }
 
         private int GetCurrentUserId()
