@@ -16,6 +16,9 @@
 13. Profile: name + birthdate are on the API (2026-10-26); only the avatar photo (data URL in UI localStorage) is left — needs an upload design (decide with her).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
+### Phase 2b — Reviews
+27. Admin deletes a review: `Reviews_Delete` exists (0024); the admin API endpoint + admin UI button are not built (separate repos, not attached to this session). Until then: `EXEC dbo.Reviews_Delete @Id = ...` by hand.
+
 ### Phase 3 — Cart, orders, stock
 (done: orders, addresses, server cart 2026-10-26)
 
@@ -34,11 +37,10 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0021 (0021 on 2026-10-26). To run: 0022 + 0023 (see below).
-- `Database/Migrations/0023_users_birthdate.sql` — `Users.Birthdate`, user read procedures redefined (keep lockout columns), new `Users_SetProfile`. Run after 0022. Needed by `Auth/UpdateProfile` (it now calls `Users_SetProfile`, so run it before using the profile page).
-- `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
+- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; test results of lockout / birthdate / reviews not reported yet).
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-27) Reviews, both need the token: `GET Reviews/GetMyReview?bookId` -> `data = review` (same shape as the list items) or `null` when the person has none; `POST Reviews/SaveReview { bookId, rating (1-5), text (3-2000) }` -> `isSuccess`; creates the review or replaces the person's old one for that book; `false` + Persian message when the book is missing/hidden. The list endpoints (`GetByBookId`, `GetByAuthorId`) are unchanged and public; a new review appears there at once. Needs script 0024.
 - (DONE in API + UI 2026-10-26) User objects carry `birthdate` (Jalali text `1372/05/12` or null). `POST Auth/UpdateProfile { name (2-100), birthdate ("" or yyyy/MM/dd) }` -> `data = user`. ALWAYS send both fields: an empty `birthdate` clears it. Needs script 0023.
 - (DONE in API + UI 2026-10-26) Cart contract, answers the envelope, all need the token:
   - `GET Cart/GetMyCart` -> `data = [ { id (bookId), title, image, price, oldPrice (null = none), stock, quantity } ]`, in the order added; hidden books are left out; price/stock are always current.
