@@ -12,17 +12,17 @@
 
 ### Phase 2 — Accounts
 11. Real SMS provider for OTP (code is only logged now, `Security/SmsSender.cs`). Pick one (Kavenegar recommended) and put its API key in env vars, not in the repo. Until then `SmsSender` MUST NOT run in production (codes in logs).
-12. Refresh tokens / revoke a stolen long "remember me" token (30 days) + rate limit for password login (`LoginWithPassword` has no lockout / throttling yet) — with task 25.
-13. Profile/addresses: tables `Addresses`; endpoints replace UI localStorage (`Users` already exists).
+12. Refresh tokens / revoke a stolen long "remember me" token (30 days) — with task 25. Password-login lockout per account DONE 2026-10-26 (script 0022). Still open: the SAME lockout in the admin API login (separate repo, it needs `Users_RegisterFailedLogin` / `Users_ClearFailedLogins` from 0022), and a per-IP rate limit (needs the real proxy setup, task 25).
+13. Profile: name + birthdate are on the API (2026-10-26); only the avatar photo (data URL in UI localStorage) is left — needs an upload design (decide with her).
 14. Admin promotion is a hand-run `EXEC dbo.Users_SetRole`; build an admin screen/endpoint only if needed (phase 5).
 
 ### Phase 3 — Cart, orders, stock
-15. Cart stored per user in DB; guest cart stays in UI localStorage and is merged into the server cart right after login (decided 2026-10-07).
+(done: orders, addresses, server cart 2026-10-26)
 
 ### Phase 4 — Payment and shipping
 18. Payment gateway (Iranian, e.g. Zarinpal or IDPay — she checks the production requirements: domain, enamad). Flow: create payment → redirect → verify callback → mark order paid. Never trust the browser for "paid".
 19. Shipping methods and prices (order statuses + tracking code are DONE 2026-10-25, script 0019).
-20. Stock release for unpaid/cancelled orders (timeout rule) — decide with her.
+20. Stock release for unpaid orders (timeout rule). WAIT for the payment gateway (task 18): until then "Paid" is set by hand in the admin, so a timer would cancel orders before she confirms them (decided 2026-10-26).
 
 ### Phase 5 — Admin (required before public launch)
 22. Admin endpoints: books, authors, stock, orders (list, details, status + tracking code) are DONE in the SEPARATE repo `TheMorisakiBookshop.admin.api`. Still: refund / return handling after delivery (business rule, task 26).
@@ -34,9 +34,21 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0019 (0019 on 2026-10-26).
+- (none) She ran 0010-0021 (0021 on 2026-10-26). To run: 0022 + 0023 (see below).
+- `Database/Migrations/0023_users_birthdate.sql` — `Users.Birthdate`, user read procedures redefined (keep lockout columns), new `Users_SetProfile`. Run after 0022. Needed by `Auth/UpdateProfile` (it now calls `Users_SetProfile`, so run it before using the profile page).
+- `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-26) User objects carry `birthdate` (Jalali text `1372/05/12` or null). `POST Auth/UpdateProfile { name (2-100), birthdate ("" or yyyy/MM/dd) }` -> `data = user`. ALWAYS send both fields: an empty `birthdate` clears it. Needs script 0023.
+- (DONE in API + UI 2026-10-26) Cart contract, answers the envelope, all need the token:
+  - `GET Cart/GetMyCart` -> `data = [ { id (bookId), title, image, price, oldPrice (null = none), stock, quantity } ]`, in the order added; hidden books are left out; price/stock are always current.
+  - `POST Cart/SetQuantity { bookId, quantity (0-20) }` -> `isSuccess`; quantity 0 removes the book; `false` + Persian message when the book is missing/hidden. The UI checks stock itself when adding (`addCheckedToCart`); the API checks again at order time.
+  - `POST Cart/MergeCart { lines: [{ bookId, quantity }] }` -> `isSuccess`. Called once right after login with the guest cart: same book in both = quantities added (max 20); hidden/missing books skipped.
+  - `POST Cart/ClearCart` -> `isSuccess` (after a successful order).
+- (DONE in API + UI 2026-10-26) Addresses contract, answers the envelope, all need the token (401 otherwise):
+  - `GET Addresses/GetMyAddresses` -> `data = [ { id, title, recipient, phone, city, fullAddress, postalCode, isDefault } ]`, default first.
+  - `POST Addresses/AddAddress { title, recipient, phone ("" or 09xxxxxxxxx), city, fullAddress, postalCode ("" or 10 digits), isDefault }` -> `data = id`. The first address of a user is always the default.
+  - `POST Addresses/UpdateAddress?id` (same body), `POST Addresses/DeleteAddress?id`, `POST Addresses/SetDefaultAddress?id` -> `isSuccess`; `false` + Persian message when the id is not found or belongs to another user. Deleting the default makes the oldest remaining one the default.
 - (DONE in API + UI 2026-10-21) Orders contract, answers the envelope, both need the token (401 otherwise):
   - `POST Orders/PlaceOrder { recipientName, recipientMobile (09xxxxxxxxx), address, postalCode ("" or 10 digits), lines: [{ bookId, quantity (1-20) }] }` -> `data = orderId` (int). `isSuccess: false` + Persian message when a book is hidden/missing or stock is not enough (nothing is saved, no stock taken). Prices come from the database, the UI sends NO price. Order status starts `PendingPayment`.
   - `GET Orders/GetMyOrders` -> `data = [ { id, status, subtotal, shippingCost, total, recipientName, recipientMobile, address, postalCode, trackingCode, createdAt (ISO, UTC), lines: [ { bookId, title, image, unitPrice, quantity } ] } ]`, newest first. `status` is one of `PendingPayment | Paid | Packed | Shipped | Delivered | Cancelled` (UI maps to Persian). The old local `Order` model (string id, Jalali date) must be replaced; `createdAt` -> Jalali in the UI.

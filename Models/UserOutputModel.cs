@@ -6,6 +6,7 @@ namespace TheMorisakiBookshop.Models
         public string Mobile { get; set; } = "";
         public string? Email { get; set; }
         public string? Name { get; set; }
+        public string? Birthdate { get; set; }
         public bool HasPassword { get; set; }
         public string Role { get; set; } = "";
     }

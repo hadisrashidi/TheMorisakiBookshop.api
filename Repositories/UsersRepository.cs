@@ -78,6 +78,43 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        // Counts a wrong password; returns the minutes the account is locked now (0 = not locked).
+        public async Task<int> RegisterFailedLoginAsync(int id, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_RegisterFailedLogin",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                int lockedMinutesLeft = await connection.ExecuteScalarAsync<int>(command);
+
+                return lockedMinutesLeft;
+            }
+        }
+
+        public async Task ClearFailedLoginsAsync(int id, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_ClearFailedLogins",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                await connection.ExecuteAsync(command);
+            }
+        }
+
         // Returns 'Ok' | 'EmailTaken'
         public async Task<string> SetCredentialsAsync(int id, string email, string passwordHash, CancellationToken cancellationToken)
         {
@@ -97,6 +134,27 @@ namespace TheMorisakiBookshop.Repositories
                 string status = await connection.ExecuteScalarAsync<string>(command) ?? "";
 
                 return status;
+            }
+        }
+
+        public async Task<bool> SetProfileAsync(int id, string name, string birthdate, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                parameters.Add("@Name", name);
+                parameters.Add("@Birthdate", birthdate);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_SetProfile",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                int affectedRows = await connection.ExecuteScalarAsync<int>(command);
+
+                return affectedRows > 0;
             }
         }
 

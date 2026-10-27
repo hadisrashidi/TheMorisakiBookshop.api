@@ -69,6 +69,8 @@ namespace TheMorisakiBookshop
             builder.Services.AddScoped<ReviewsRepository>();
             builder.Services.AddScoped<UsersRepository>();
             builder.Services.AddScoped<OrdersRepository>();
+            builder.Services.AddScoped<AddressesRepository>();
+            builder.Services.AddScoped<CartRepository>();
             builder.Services.AddScoped<OtpCodesRepository>();
 
             builder.Services.AddScoped<OtpService>();
