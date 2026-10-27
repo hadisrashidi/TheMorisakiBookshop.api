@@ -16,7 +16,7 @@ Onboarding: done (2026-10-07)
 - Addresses (2026-10-26, script 0020 run by her, round trip not reported yet): `Controllers/Shop/AddressesController.cs` (`GetMyAddresses`, `AddAddress`, `UpdateAddress`, `DeleteAddress`, `SetDefaultAddress`, all `[Authorize]`), `Repositories/AddressesRepository.cs`, table `Addresses`.
 - Cart (2026-10-26, script 0021 run by her): `Controllers/Shop/CartController.cs` (`GetMyCart`, `SetQuantity`, `MergeCart`, `ClearCart`, all `[Authorize]`), `Repositories/CartRepository.cs`, table `CartItems`.
 - Login lockout (2026-10-26, script 0022 NOT run yet): `AuthController.LoginWithPassword` + `UsersRepository.RegisterFailedLoginAsync/ClearFailedLoginsAsync`, columns `Users.FailedLoginCount/LockedUntil`.
-- Reviews (2026-10-27, script 0024 NOT run yet): `ReviewsController.GetMyReview` / `SaveReview` (`[Authorize]`, one review per user per book), `Reviews.UserId`; the read endpoints are public. Old seeded reviews have no user.
+- Reviews (2026-10-27, script 0024 run by her, round trip not reported yet): `ReviewsController.GetMyReview` / `SaveReview` (`[Authorize]`, one review per user per book), `Reviews.UserId`; the read endpoints are public. Old seeded reviews have no user.
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
@@ -26,7 +26,7 @@ Onboarding: done (2026-10-07)
 ### 2026-10-27 — Write a review (web session, branch `claude/focused-euler-oqo92a`, API + UI)
 - Her answers: any logged-in user may review, shown at once (she deletes if needed), stars + text. Chosen by me (told her): one review per person per book, saving again replaces it; reviewer name copied from the account; date = Jalali text made in C#. Did: `0024_reviews_write.sql`, `SaveReviewRequestModel`, `ReviewsRepository.GetByUserAndBookAsync/SaveAsync`, `ReviewsController.GetMyReview/SaveReview`. UI: review form in the reviews tab of the book page. Contract in "For the UI repo".
 - Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0024 never run, no browser test.
-- Next: she runs 0024 and tests (write, edit, logged out). Admin delete button needs the admin repos (BACKLOG 27).
+- She ran 0024 (2026-10-27). Next: she tests (write, edit, logged out). Admin delete button needs the admin repos (BACKLOG 27).
 ### 2026-10-26 (4) — Profile birthdate on the server (web session, same branch, API + UI)
 - Order chosen by me (she said so): lockout (done above) -> profile -> reviews -> UI polish. Did: `0023_users_birthdate.sql`, `UserModel` / `UserOutputModel` / `JwtTokenService.ToOutputModel` (+ `Birthdate`), `UpdateProfileRequestModel.Birthdate`, `UsersRepository.SetProfileAsync`, `AuthController.UpdateProfile`. UI: `UserModel.birthdate`, `UpdateProfileRequestModel.birthdate`, profile page saves name + birthdate, login moves a local birthdate to an account without one.
 - Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0022 and 0023 never run, no browser test.
