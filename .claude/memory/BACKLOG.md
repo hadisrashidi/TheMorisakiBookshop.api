@@ -32,9 +32,9 @@
 23. Admin UI panel: books, authors, stock, orders (list, details, status buttons) DONE in `TheMorisakiBookshop.admin.ui`.
 
 ### Phase 6 — Ready to sell
-24. Final header/footer, legal pages (terms, privacy, returns, shipping policy, contact), SEO basics, error pages.
+24. Launch polish: DONE in the UI 2026-10-27 as drafts (404, titles, legal pages, footer links); real texts/contact data wait for task 26 and her real details.
 25. Security + deployment pass: HTTPS, CORS for the real domain, secrets outside the repo (remove the local `sa` password from `appsettings.json` — see DECISIONS 2026-10-11), rate limiting on OTP/login, backups of the database, and the uploads folder (`Uploads:RootPath`, shared by the shop API and the admin API) on a persistent disk/volume + backups (a redeploy would delete uploaded covers).
-26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
+26. Business items (not code, she owns them; the draft legal pages and FAQ currently say: returns within 7 days, shipping in 2-5 working days — placeholders): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
 - (none) She ran 0010-0024 (0022-0024 on 2026-10-27; test results of lockout / birthdate / reviews not reported yet).
