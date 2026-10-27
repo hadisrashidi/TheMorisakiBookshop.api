@@ -34,9 +34,9 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- (none) She ran 0010-0021 (0021 on 2026-10-26). To run: 0022 + 0023 (see below).
 - `Database/Migrations/0023_users_birthdate.sql` — `Users.Birthdate`, user read procedures redefined (keep lockout columns), new `Users_SetProfile`. Run after 0022. Needed by `Auth/UpdateProfile` (it now calls `Users_SetProfile`, so run it before using the profile page).
 - `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
-- `Database/Migrations/0019_orders_set_status.sql` — `dbo.Orders_SetStatus` (status flow + tracking code; cancel gives the stock back). Run after 0018 (she ran 0010-0018, checked 2026-10-24). Needed by the admin API `Orders/UpdateOrderStatus`.
 
 ## For the UI repo
 - (DONE in API + UI 2026-10-26) User objects carry `birthdate` (Jalali text `1372/05/12` or null). `POST Auth/UpdateProfile { name (2-100), birthdate ("" or yyyy/MM/dd) }` -> `data = user`. ALWAYS send both fields: an empty `birthdate` clears it. Needs script 0023.
