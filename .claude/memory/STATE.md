@@ -16,7 +16,7 @@ Onboarding: done (2026-10-07)
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
 ## Active work
-- Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0018); shop UI checkout and the read-only admin orders screens are done (admin repos); next status change / tracking code + payment (phase 4).
+- Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0019); shop UI checkout and the admin orders screens (list, details, status change + tracking code) are done; payment gateway postponed by her (2026-10-25).
 
 ## Session log
 ### 2026-10-21 — Phase 3 start: orders API (web session, branch `claude/gifted-curie-7qha13`; admin repos attached but untouched)
@@ -26,7 +26,7 @@ Onboarding: done (2026-10-07)
 - Follow-up (same day): she ran 0012-0016. UI checkout + orders page now call the API (UI repo, same branch). Wrote `0017_orders_admin_procedures.sql` (`Orders_Search` paged + filters, `Orders_GetById`) for the admin repos (`OrdersController` there: `SearchOrders`, `GetOrderById`, read only). Her request: "see the shop orders in the admin panel". NOT verified: 0017 never run, no real database round trip.
 - She ran 0017 (OK, 2026-10-24). Her follow-up wishes: book titles in the admin orders table, stock check when adding to the cart, live admin list -> script `0018_orders_search_book_titles.sql` (`Orders_Search` + `BookTitles` via `STRING_AGG`, search matches a book title); the other two are UI/admin work. NOT verified: 0018 never run.
 - She ran 0018 and tested book titles, the add-to-cart stock check and the live admin list: OK (2026-10-24).
-- Next: she runs 0019.
+- She ran 0019 (OK, 2026-10-26). Open: her image report (compare the two `Uploads folder` log lines), then payment (phase 4) or the next task she picks.
 ### 2026-10-25 — Status change, search-as-you-type, empty cart/favourites, upload report (web session, same branch, all four repos)
 - Her answers: payment gateway NOT now; order status flow = "whatever you decided" (DECISIONS 2026-10-25). Did: script `0019_orders_set_status.sql` (`Orders_SetStatus`); both APIs now log the uploads folder at startup (`Uploads folder ...`). admin API: `POST Orders/UpdateOrderStatus?id { status, trackingCode? }`. UI: back to home when the cart / favourites become empty; admin lists search while typing (400 ms, like the shop header), authors list filters at once, order page status buttons.
 - Her report: images uploaded in the admin do not show in the shop. Checked: with both APIs next to each other (`../uploads`) an upload through the admin API is served by the shop API (png / jpg / webp all 200 with the right type), and every shop `<img>` goes through `apiImage` -> the code is fine; cause = the two APIs write / read DIFFERENT folders on her machine. She compares the two `Uploads folder` log lines and, if they differ, sets the same absolute `Uploads:RootPath` in both `appsettings.Development.json`. Not changed in code (her machine, her choice of path).
