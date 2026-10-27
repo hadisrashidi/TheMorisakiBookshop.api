@@ -24,7 +24,7 @@ Onboarding: done (2026-10-07)
 
 ## Session log
 ### 2026-10-27 (2) — UI polish start (web session, same branch, UI only)
-- She ran 0022 + 0023 (and 0024). Asked to start UI polish; no API change. See the UI STATE for what was done.
+- She ran 0022 + 0023 (and 0024). Asked to start UI polish; no API change. Done in the UI repo: header genre links, account menu, footer links, 404 page, page titles, DRAFT legal pages (details in the UI STATE). Footer contact data is sample data.
 ### 2026-10-27 — Write a review (web session, branch `claude/focused-euler-oqo92a`, API + UI)
 - Her answers: any logged-in user may review, shown at once (she deletes if needed), stars + text. Chosen by me (told her): one review per person per book, saving again replaces it; reviewer name copied from the account; date = Jalali text made in C#. Did: `0024_reviews_write.sql`, `SaveReviewRequestModel`, `ReviewsRepository.GetByUserAndBookAsync/SaveAsync`, `ReviewsController.GetMyReview/SaveReview`. UI: review form in the reviews tab of the book page. Contract in "For the UI repo".
 - Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0024 never run, no browser test.
