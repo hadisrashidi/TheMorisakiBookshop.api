@@ -1,4 +1,8 @@
 # Archived sessions
+### 2026-10-26 — Addresses on the server (web session, branch `claude/lucid-faraday-5ab9od`, API + UI)
+- Her choice: start task 13 (addresses) after "next task" options. Did: script `0020_addresses.sql`; `AddressOutputModel`, `SaveAddressRequestModel`, `AddressesRepository`, `AddressesController`, registered in `Program.cs`. UI: `AddressesApiService`, `AddressesService` rewritten (server list in a signal, one-time upload of old localStorage addresses), addresses page async + `isSaving`, cart loads addresses before checkout; models `address.response.model.ts` / `save-address.request.model.ts` (old `address.model.ts` removed).
+- Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: script 0020 never run (no SQL Server here), no browser test, no real round trip.
+- Next: she runs 0020, tests addresses page + checkout.
 ### 2026-10-21 — Phase 3 start: orders API (web session, branch `claude/gifted-curie-7qha13`; admin repos attached but untouched)
 - Her request: an orders section in the admin panel. Found: no orders exist (shop checkout is fake, localStorage) -> order of work: shop orders API, shop UI checkout, then admin list. She agreed with: cart stays in localStorage, status `PendingPayment` (DECISIONS 2026-10-21).
 - Did: scripts `0015_create_orders_tables.sql`, `0016_orders_procedures.sql`; C#: `OrdersController`, `OrdersRepository`, `OrderOutputModel`, `OrderLineOutputModel`, `OrderPlacedModel`, `PlaceOrderRequestModel`, `OrderLineRequestModel`, `OrdersRepository` registered in `Program.cs`. Contract in "For the UI repo".

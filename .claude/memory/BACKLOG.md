@@ -37,9 +37,7 @@
 26. Business items (not code, she owns them): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0021 (0021 on 2026-10-26). She ran 0024 (2026-10-27, test result not reported yet). To run: 0022 + 0023 (see below) unless she already did.
-- `Database/Migrations/0023_users_birthdate.sql` — `Users.Birthdate`, user read procedures redefined (keep lockout columns), new `Users_SetProfile`. Run after 0022. Needed by `Auth/UpdateProfile` (it now calls `Users_SetProfile`, so run it before using the profile page).
-- `Database/Migrations/0022_login_lockout.sql` — columns `Users.FailedLoginCount/LockedUntil`, `Users_GetByEmail` (redefined), `Users_RegisterFailedLogin`, `Users_ClearFailedLogins`, `Users_ResetPassword` (redefined). Run after 0021 (she ran 0021, 2026-10-26). Needed by `Auth/LoginWithPassword`.
+- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; test results of lockout / birthdate / reviews not reported yet).
 
 ## For the UI repo
 - (DONE in API + UI 2026-10-27) Reviews, both need the token: `GET Reviews/GetMyReview?bookId` -> `data = review` (same shape as the list items) or `null` when the person has none; `POST Reviews/SaveReview { bookId, rating (1-5), text (3-2000) }` -> `isSuccess`; creates the review or replaces the person's old one for that book; `false` + Persian message when the book is missing/hidden. The list endpoints (`GetByBookId`, `GetByAuthorId`) are unchanged and public; a new review appears there at once. Needs script 0024.

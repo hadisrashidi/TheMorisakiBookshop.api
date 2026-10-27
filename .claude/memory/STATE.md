@@ -15,7 +15,7 @@ Onboarding: done (2026-10-07)
 - Orders (2026-10-21, scripts 0015-0018 run and tested by her 2026-10-24): `Controllers/Shop/OrdersController.cs` (`PlaceOrder`, `GetMyOrders`, both `[Authorize]`), `Repositories/OrdersRepository.cs`, tables `Orders`, `OrderLines`. Status starts `PendingPayment`, no payment yet.
 - Addresses (2026-10-26, script 0020 run by her, round trip not reported yet): `Controllers/Shop/AddressesController.cs` (`GetMyAddresses`, `AddAddress`, `UpdateAddress`, `DeleteAddress`, `SetDefaultAddress`, all `[Authorize]`), `Repositories/AddressesRepository.cs`, table `Addresses`.
 - Cart (2026-10-26, script 0021 run by her): `Controllers/Shop/CartController.cs` (`GetMyCart`, `SetQuantity`, `MergeCart`, `ClearCart`, all `[Authorize]`), `Repositories/CartRepository.cs`, table `CartItems`.
-- Login lockout (2026-10-26, script 0022 NOT run yet): `AuthController.LoginWithPassword` + `UsersRepository.RegisterFailedLoginAsync/ClearFailedLoginsAsync`, columns `Users.FailedLoginCount/LockedUntil`.
+- Login lockout (2026-10-26, script 0022 run by her 2026-10-27, round trip not reported): `AuthController.LoginWithPassword` + `UsersRepository.RegisterFailedLoginAsync/ClearFailedLoginsAsync`, columns `Users.FailedLoginCount/LockedUntil`.
 - Reviews (2026-10-27, script 0024 run by her, round trip not reported yet): `ReviewsController.GetMyReview` / `SaveReview` (`[Authorize]`, one review per user per book), `Reviews.UserId`; the read endpoints are public. Old seeded reviews have no user.
 - CI: `.github/workflows/build.yml` runs `dotnet build` on push/PR to main.
 
@@ -23,6 +23,8 @@ Onboarding: done (2026-10-07)
 - Phase 2 (accounts) done; phase 5 started in the separate admin repos (2026-10-19). She runs 0013 + 0014, then tests admin.ui. Still open in phase 5: orders admin (after phase 3). Real SMS provider still open (mock for now). Phase 3 started 2026-10-21: orders API written (she ran 0015-0019); shop UI checkout and the admin orders screens (list, details, status change + tracking code) are done; payment gateway postponed by her (2026-10-25).
 
 ## Session log
+### 2026-10-27 (2) — UI polish start (web session, same branch, UI only)
+- She ran 0022 + 0023 (and 0024). Asked to start UI polish; no API change. See the UI STATE for what was done.
 ### 2026-10-27 — Write a review (web session, branch `claude/focused-euler-oqo92a`, API + UI)
 - Her answers: any logged-in user may review, shown at once (she deletes if needed), stars + text. Chosen by me (told her): one review per person per book, saving again replaces it; reviewer name copied from the account; date = Jalali text made in C#. Did: `0024_reviews_write.sql`, `SaveReviewRequestModel`, `ReviewsRepository.GetByUserAndBookAsync/SaveAsync`, `ReviewsController.GetMyReview/SaveReview`. UI: review form in the reviews tab of the book page. Contract in "For the UI repo".
 - Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0024 never run, no browser test.
@@ -39,7 +41,3 @@ Onboarding: done (2026-10-07)
 - She ran 0020. Her ask: "next one". Told her task 20 (stock release timer) must wait for the payment gateway (manual "Paid" in admin), so did task 15. Script `0021_cart.sql`; `CartItemOutputModel`, `SetCartQuantityRequestModel`, `MergeCartRequestModel`, `CartRepository`, `CartController`, registered in `Program.cs`. UI: `CartApiService`, `CartService` (logged in = server cart, guest = localStorage, merge at login, empty on logout), 3 new models. Contract in "For the UI repo".
 - Verified: `dotnet build` 0 warnings; app starts, `Cart/GetMyCart` and `Cart/ClearCart` answer the 401 envelope; `npm run build` ok. NOT verified: script 0021 never run, no browser test, no real round trip.
 - Next: she runs 0021, tests: add as guest -> login (merge), change quantity, second browser, logout, order clears the cart.
-### 2026-10-26 — Addresses on the server (web session, branch `claude/lucid-faraday-5ab9od`, API + UI)
-- Her choice: start task 13 (addresses) after "next task" options. Did: script `0020_addresses.sql`; `AddressOutputModel`, `SaveAddressRequestModel`, `AddressesRepository`, `AddressesController`, registered in `Program.cs`. UI: `AddressesApiService`, `AddressesService` rewritten (server list in a signal, one-time upload of old localStorage addresses), addresses page async + `isSaving`, cart loads addresses before checkout; models `address.response.model.ts` / `save-address.request.model.ts` (old `address.model.ts` removed).
-- Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: script 0020 never run (no SQL Server here), no browser test, no real round trip.
-- Next: she runs 0020, tests addresses page + checkout.
