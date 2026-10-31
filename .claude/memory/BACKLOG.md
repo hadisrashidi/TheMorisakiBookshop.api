@@ -19,6 +19,16 @@
 ### Phase 2b — Reviews
 27. Admin deletes a review: `Reviews_Delete` exists (0024); the admin API endpoint + admin UI button are not built (separate repos, not attached to this session). Until then: `EXEC dbo.Reviews_Delete @Id = ...` by hand.
 
+### Phase 7 — Review of what is missing (2026-10-31, order chosen by Claude; she said "review, prioritise, do it")
+28. DONE 2026-10-31: orders list advanced filters + status tabs with counts (script 0026, admin API, admin UI).
+29. Filters for books (genre, language, stock: out / low / ok, hidden, price range, author, sort) and authors (genre, has books) in the admin lists. Needs a new version of `Books_Search`.
+30. Customer order tracking in the shop: status timeline per order (needs table `OrderStatusHistory` written by `Orders_SetStatus`), tracking code with a post-tracking link, "cancel" button while `PendingPayment`.
+31. Shipping methods: table `ShippingMethods` (name, price, free above X, delivery estimate), choice at checkout, `Orders.ShippingCost` filled, admin CRUD; the shop page `/shipping` reads the data instead of fixed text. Needs her business rules (task 26).
+32. Reports in the admin (dashboard): sales per day/month, revenue, orders per status, best-selling books, low stock list, new customers; export to Excel/CSV later.
+33. Admin: customers list (orders per customer), review moderation list (BACKLOG 27), order list row actions (cancel, copy tracking code), print of the order / invoice, internal note on an order.
+34. Shop extras to consider: discount codes, best sellers / new arrivals blocks on the home page, "notify me when available", gift wrap.
+35. Several payment methods (she wants more than one gateway: e.g. card-to-card with receipt check, cash on delivery) — belongs to task 18; not discussed until she raises it.
+
 ### Phase 3 — Cart, orders, stock
 (done: orders, addresses, server cart 2026-10-26)
 
@@ -37,7 +47,8 @@
 26. Business items (not code, she owns them; the draft legal pages and FAQ currently say: returns within 7 days, shipping in 2-5 working days — placeholders): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand, 2026-10-27).
+- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand). To run: 0026 (below).
+- `Database/Migrations/0026_orders_search_filters.sql` — `Orders_Search` redefined (date range, total range, sort, third result set with orders per status). Run after 0019. Needed by the admin API `Orders/SearchOrders` (old calls still work).
 
 ## For the UI repo
 - (DONE in API + UI 2026-10-27) Reviews, both need the token: `GET Reviews/GetMyReview?bookId` -> `data = review` (same shape as the list items) or `null` when the person has none; `POST Reviews/SaveReview { bookId, rating (1-5), text (3-2000) }` -> `isSuccess`; creates the review or replaces the person's old one for that book; `false` + Persian message when the book is missing/hidden. The list endpoints (`GetByBookId`, `GetByAuthorId`) are unchanged and public; a new review appears there at once. Needs script 0024.
