@@ -19,6 +19,14 @@ namespace TheMorisakiBookshop.Models.Dto
         [RegularExpression(@"^(\d{10})?$", ErrorMessage = "کد پستی باید ۱۰ رقم باشد.")]
         public string PostalCode { get; set; } = "";
 
+        // The city of the address: decides which shipping methods are allowed (Tehran-only ones).
+        [Required(ErrorMessage = "شهر الزامی است.")]
+        [MaxLength(100, ErrorMessage = "نام شهر نباید بیشتر از ۱۰۰ نویسه باشد.")]
+        public string City { get; set; } = "";
+
+        [Range(1, int.MaxValue, ErrorMessage = "روش ارسال را انتخاب کنید.")]
+        public int ShippingMethodId { get; set; }
+
         [Required(ErrorMessage = "سبد خرید خالی است.")]
         [MinLength(1, ErrorMessage = "سبد خرید خالی است.")]
         [MaxLength(50, ErrorMessage = "تعداد ردیف‌های سفارش زیاد است.")]

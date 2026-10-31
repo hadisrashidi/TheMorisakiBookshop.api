@@ -1,4 +1,12 @@
 # Archived sessions
+### 2026-10-26 (3) — Password-login lockout (web session, same branch)
+- She ran 0021. Asked her what next (options: lockout / profile / reviews / UI polish); she chose lockout, then said "do the rest in the order you think is right". Did: `0022_login_lockout.sql`, `UserModel` (+ `FailedLoginCount`, `LockedMinutesLeft`), `UsersRepository` (2 methods), `AuthController.LoginWithPassword` + `GetLockedMessage`. Contract unchanged (same envelope, new Persian message when locked).
+- Verified: `dotnet build` 0 warnings. NOT verified: 0022 never run, no real wrong-password round trip.
+- Next: she runs 0022 and tries 5 wrong passwords; admin API needs the same lockout (BACKLOG 12).
+### 2026-10-26 (2) — Server cart (web session, same branch, API + UI)
+- She ran 0020. Her ask: "next one". Told her task 20 (stock release timer) must wait for the payment gateway (manual "Paid" in admin), so did task 15. Script `0021_cart.sql`; `CartItemOutputModel`, `SetCartQuantityRequestModel`, `MergeCartRequestModel`, `CartRepository`, `CartController`, registered in `Program.cs`. UI: `CartApiService`, `CartService` (logged in = server cart, guest = localStorage, merge at login, empty on logout), 3 new models. Contract in "For the UI repo".
+- Verified: `dotnet build` 0 warnings; app starts, `Cart/GetMyCart` and `Cart/ClearCart` answer the 401 envelope; `npm run build` ok. NOT verified: script 0021 never run, no browser test, no real round trip.
+- Next: she runs 0021, tests: add as guest -> login (merge), change quantity, second browser, logout, order clears the cart.
 ### 2026-10-26 — Addresses on the server (web session, branch `claude/lucid-faraday-5ab9od`, API + UI)
 - Her choice: start task 13 (addresses) after "next task" options. Did: script `0020_addresses.sql`; `AddressOutputModel`, `SaveAddressRequestModel`, `AddressesRepository`, `AddressesController`, registered in `Program.cs`. UI: `AddressesApiService`, `AddressesService` rewritten (server list in a signal, one-time upload of old localStorage addresses), addresses page async + `isSaving`, cart loads addresses before checkout; models `address.response.model.ts` / `save-address.request.model.ts` (old `address.model.ts` removed).
 - Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: script 0020 never run (no SQL Server here), no browser test, no real round trip.

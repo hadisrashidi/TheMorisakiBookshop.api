@@ -19,6 +19,16 @@
 ### Phase 2b — Reviews
 27. Admin deletes a review: `Reviews_Delete` exists (0024); the admin API endpoint + admin UI button are not built (separate repos, not attached to this session). Until then: `EXEC dbo.Reviews_Delete @Id = ...` by hand.
 
+### Phase 7 — Review of what is missing (2026-10-31, order chosen by Claude; she said "review, prioritise, do it")
+28. DONE 2026-10-31: orders list advanced filters + status tabs with counts (script 0026, admin API, admin UI).
+29. Filters for books (genre, language, stock: out / low / ok, hidden, price range, author, sort) and authors (genre, has books) in the admin lists. Needs a new version of `Books_Search`.
+30. Customer order tracking in the shop: status timeline per order (needs table `OrderStatusHistory` written by `Orders_SetStatus`), tracking code with a post-tracking link, "cancel" button while `PendingPayment`.
+31. DONE 2026-10-31 with PLACEHOLDER data (script 0027, shop cart choice, `/shipping` page, admin page). Still open: her real methods, prices, free-above amount, cut-off time and delivery texts (see Questions for her); optional later: weight/city based prices, pickup address.
+32. Reports in the admin (dashboard): sales per day/month, revenue, orders per status, best-selling books, low stock list, new customers; export to Excel/CSV later.
+33. Admin: customers list (orders per customer), review moderation list (BACKLOG 27), order list row actions (cancel, copy tracking code), print of the order / invoice, internal note on an order.
+34. Shop extras to consider: discount codes, best sellers / new arrivals blocks on the home page, "notify me when available", gift wrap.
+35. Several payment methods (she wants more than one gateway: e.g. card-to-card with receipt check, cash on delivery) — belongs to task 18; not discussed until she raises it.
+
 ### Phase 3 — Cart, orders, stock
 (done: orders, addresses, server cart 2026-10-26)
 
@@ -37,9 +47,12 @@
 26. Business items (not code, she owns them; the draft legal pages and FAQ currently say: returns within 7 days, shipping in 2-5 working days — placeholders): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
-- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand, 2026-10-27).
+- `Database/Migrations/0027_shipping_methods.sql` — table `ShippingMethods` (3 placeholder rows), `Orders.ShippingMethodName`, shipping procedures, new `Orders_Place` (NEEDS the UI of this session: it requires a shipping method), `Orders_GetByUserId` / `Orders_GetById` redefined. Run after 0026 (needs 0016 + 0017). Deploy the shop API + UI together with it.
+- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand). To run: 0026 + 0027 (below).
+- `Database/Migrations/0026_orders_search_filters.sql` — `Orders_Search` redefined (date range, total range, sort, third result set with orders per status). Run after 0019. Needed by the admin API `Orders/SearchOrders` (old calls still work).
 
 ## For the UI repo
+- (DONE in API + UI 2026-10-31, needs script 0027) Shipping: `GET Shipping/GetShippingMethods?subtotal&city` (public) -> `data = [ { id, name, price, freeAbove (null = never), cost (what THIS cart pays: 0 when subtotal >= freeAbove), deliveryText, tehranOnly } ]`; with `city` (Persian/Arabic ی ک are the same) Tehran-only methods are left out for other cities; without `subtotal`/`city` = the information list. `POST Orders/PlaceOrder` now ALSO needs `city` and `shippingMethodId` (API refuses with a Persian message when the method is off or not allowed for the city); the cost is worked out in SQL from database prices; `GET Orders/GetMyOrders` orders carry `shippingMethodName` (empty for old orders).
 - (DONE in API + UI 2026-10-27) Reviews, both need the token: `GET Reviews/GetMyReview?bookId` -> `data = review` (same shape as the list items) or `null` when the person has none; `POST Reviews/SaveReview { bookId, rating (1-5), text (3-2000) }` -> `isSuccess`; creates the review or replaces the person's old one for that book; `false` + Persian message when the book is missing/hidden. The list endpoints (`GetByBookId`, `GetByAuthorId`) are unchanged and public; a new review appears there at once. Needs script 0024.
 - (DONE in API + UI 2026-10-26) User objects carry `birthdate` (Jalali text `1372/05/12` or null). `POST Auth/UpdateProfile { name (2-100), birthdate ("" or yyyy/MM/dd) }` -> `data = user`. ALWAYS send both fields: an empty `birthdate` clears it. Needs script 0023.
 - (DONE in API + UI 2026-10-26) Cart contract, answers the envelope, all need the token:
@@ -77,5 +90,6 @@
 - (DONE in API 2026-10-12) `GET Books/SearchBooks`: `inStockOnly` is a plain bool; `genres` / `languages` repeat in the query (`?genres=a&genres=b`). Book `specs` still `[{ label, value }]`. `Price`/`OldPrice` JSON numbers, `oldPrice` is `null` (not "") when there is no discount. Review `date` stays Jalali text.
 
 ## Questions for her
+- Shipping (she will think about it and wants GUIDANCE; placeholders are in the database, editable in the admin `/shipping`): which methods she really offers (post pishtaz / chapar / Tehran courier / pickup), real prices (get quotes from the carrier for a typical book parcel), free-above amount (placeholder 2,000,000 toman), order cut-off time and delivery times (placeholder: 12:00, 2-5 working days post, 1-2 days Tehran courier). Help her decide when she asks.
 - Payment gateway choice and its production requirements (task 18).
 - SMS provider for OTP (task 11).
