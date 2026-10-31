@@ -36,6 +36,8 @@ namespace TheMorisakiBookshop.Repositories
                 parameters.Add("@RecipientMobile", request.RecipientMobile);
                 parameters.Add("@Address", request.Address.Trim());
                 parameters.Add("@PostalCode", request.PostalCode);
+                parameters.Add("@ShippingMethodId", request.ShippingMethodId);
+                parameters.Add("@City", request.City.Trim());
                 parameters.Add("@Lines", linesJson);
 
                 CommandDefinition command = new CommandDefinition(

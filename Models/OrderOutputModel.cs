@@ -8,6 +8,9 @@ namespace TheMorisakiBookshop.Models
         public string Status { get; set; } = "";
         public decimal Subtotal { get; set; }
         public decimal ShippingCost { get; set; }
+
+        // Name of the shipping method at order time (empty for orders placed before shipping methods existed).
+        public string ShippingMethodName { get; set; } = "";
         public decimal Total { get; set; }
         public string RecipientName { get; set; } = "";
         public string RecipientMobile { get; set; } = "";

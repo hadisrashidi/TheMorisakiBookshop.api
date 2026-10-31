@@ -1,4 +1,5 @@
 # Done
+2026-10-31: Task 31 shipping methods (placeholder data) + task 28 order filters
 2026-10-21: Tasks 16+17 (API side) — `Orders`/`OrderLines` tables (0015), `Orders_Place` / `Orders_GetByUserId` (0016), `OrdersController` (`PlaceOrder`, `GetMyOrders`). UI checkout + admin orders list still open.
 2026-10-12: Task 4 — stored procedure scripts 0004-0007 written (Authors, BookSpecs, Books, Reviews).
 2026-10-12: Task 2 — she started Docker SQL Server and ran 0001-0003 successfully.
