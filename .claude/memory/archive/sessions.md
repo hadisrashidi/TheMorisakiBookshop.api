@@ -1,4 +1,8 @@
 # Archived sessions
+### 2026-10-26 (4) — Profile birthdate on the server (web session, same branch, API + UI)
+- Order chosen by me (she said so): lockout (done above) -> profile -> reviews -> UI polish. Did: `0023_users_birthdate.sql`, `UserModel` / `UserOutputModel` / `JwtTokenService.ToOutputModel` (+ `Birthdate`), `UpdateProfileRequestModel.Birthdate`, `UsersRepository.SetProfileAsync`, `AuthController.UpdateProfile`. UI: `UserModel.birthdate`, `UpdateProfileRequestModel.birthdate`, profile page saves name + birthdate, login moves a local birthdate to an account without one.
+- Verified: `dotnet build` 0 warnings, `npm run build` ok. NOT verified: 0022 and 0023 never run, no browser test.
+- Next: she runs 0022 + 0023. Avatar stays in the browser.
 ### 2026-10-26 (3) — Password-login lockout (web session, same branch)
 - She ran 0021. Asked her what next (options: lockout / profile / reviews / UI polish); she chose lockout, then said "do the rest in the order you think is right". Did: `0022_login_lockout.sql`, `UserModel` (+ `FailedLoginCount`, `LockedMinutesLeft`), `UsersRepository` (2 methods), `AuthController.LoginWithPassword` + `GetLockedMessage`. Contract unchanged (same envelope, new Persian message when locked).
 - Verified: `dotnet build` 0 warnings. NOT verified: 0022 never run, no real wrong-password round trip.

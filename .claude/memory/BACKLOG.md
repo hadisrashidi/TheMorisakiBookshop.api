@@ -21,7 +21,7 @@
 
 ### Phase 7 — Review of what is missing (2026-10-31, order chosen by Claude; she said "review, prioritise, do it")
 28. DONE 2026-10-31: orders list advanced filters + status tabs with counts (script 0026, admin API, admin UI).
-29. Filters for books (genre, language, stock: out / low / ok, hidden, price range, author, sort) and authors (genre, has books) in the admin lists. Needs a new version of `Books_Search`.
+29. DONE 2026-11-01: books filters (stock tabs, author, genre + language multi-select, visibility, price range, sort) + author-name search (script 0028), authors genre filter. Not done: author filter `has books`, counts on the stock tabs.
 30. Customer order tracking in the shop: status timeline per order (needs table `OrderStatusHistory` written by `Orders_SetStatus`), tracking code with a post-tracking link, "cancel" button while `PendingPayment`.
 31. DONE 2026-10-31 with PLACEHOLDER data (script 0027, shop cart choice, `/shipping` page, admin page). Still open: her real methods, prices, free-above amount, cut-off time and delivery texts (see Questions for her); optional later: weight/city based prices, pickup address.
 32. Reports in the admin (dashboard): sales per day/month, revenue, orders per status, best-selling books, low stock list, new customers; export to Excel/CSV later.
@@ -47,8 +47,9 @@
 26. Business items (not code, she owns them; the draft legal pages and FAQ currently say: returns within 7 days, shipping in 2-5 working days — placeholders): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0028_books_search_author_and_admin_filters.sql` — `Books_Search` redefined (search text also matches the author name, `@StockStatus`, `@Visibility`, two more sorts). Run after 0027. Old calls (shop UI) keep working.
 - `Database/Migrations/0027_shipping_methods.sql` — table `ShippingMethods` (3 placeholder rows), `Orders.ShippingMethodName`, shipping procedures, new `Orders_Place` (NEEDS the UI of this session: it requires a shipping method), `Orders_GetByUserId` / `Orders_GetById` redefined. Run after 0026 (needs 0016 + 0017). Deploy the shop API + UI together with it.
-- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand). To run: 0026 + 0027 (below).
+- (none) She ran 0010-0024 (0022-0024 on 2026-10-27; scripts ran with success; she chose NOT to test lockout / birthdate / reviews by hand). To run: 0026 + 0027 + 0028 (below).
 - `Database/Migrations/0026_orders_search_filters.sql` — `Orders_Search` redefined (date range, total range, sort, third result set with orders per status). Run after 0019. Needed by the admin API `Orders/SearchOrders` (old calls still work).
 
 ## For the UI repo
