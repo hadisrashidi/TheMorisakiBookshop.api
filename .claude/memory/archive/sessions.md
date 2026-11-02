@@ -1,4 +1,7 @@
 # Archived sessions
+### 2026-11-05 — Report comparison with the previous period (web session, branch `claude/focused-euler-oqo92a`, API + admin UI repos)
+- She said "start the next one" (nothing to run). Claude chose the comparison (open idea of task 32). Did (admin UI only, no SQL, no API change): `/reports` asks the same report again for the period right before (same number of days) and shows ▲/▼ percent under revenue, orders, average order and books sold; the period text is shown above the cards. `utils/period-compare.ts`.
+- Verified: `npm run build` ok, Playwright with a mocked API (30 days 1405/07/12..08/11 -> previous 06/13..07/11; 7 days -> 07/28..08/04; deltas right; a failing previous call = no deltas, no error toast). NOT verified against a real database.
 ### 2026-11-04 (4) — Excel export for reports and customers (web session, branch `claude/focused-euler-oqo92a`, API + admin UI repos)
 - She ran 0036 and said "start the next one" (nothing new to run). Did (admin UI only, no SQL, no API change): "خروجی اکسل" on `/customers` (current search + sort, all pages, max 5000 -> `customers.csv`), on `/reports` for the days with sales (`sales-<from>-<to>.csv`) and for the best-selling books (`top-books.csv`); same `utils/csv-download.ts`.
 - Verified: `npm run build` ok, Playwright with a mocked API (75 customers = 2 calls, 76 lines; report files with Jalali days; quotes doubled). NOT verified: real Excel.
