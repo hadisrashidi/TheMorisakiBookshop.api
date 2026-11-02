@@ -1,4 +1,9 @@
 # Archived sessions
+### 2026-10-31 — Review of what is missing + advanced order filters (web session, branch `claude/focused-euler-oqo92a`, ALL FOUR repos attached)
+- Her request: shop is not complete, no admin reference; she named example shops (oketab, کتاب ملت, کتاب مینویی; they could not be opened/found from the VM), asked for advanced filters (books, authors, above all orders), reports, order tracking for customers, a shipping-methods page, several payment methods; "review, prioritise and do it". Roadmap written to BACKLOG "Phase 7" (my order). Payment: she said NOT to bring up the gateway unless she does.
+- Did first (task 28): script `0026_orders_search_filters.sql` (`Orders_Search`: date range, total range, sort, third result set = orders per status); admin API `OrderSearchRequestModel` + `Orders/SearchOrders` (Jalali dates converted in C#); admin UI status tabs with counts + advanced filter panel + quick ranges.
+- Verified: `dotnet build` 0 warnings (admin API), `npm run build` ok, Playwright with a mocked API (tabs, counts, Persian digits, quick range, validation message). NOT verified: 0026 never run (no SQL Server here).
+- Next: she runs 0026 and tries the filters; then task 29.
 ### 2026-10-27 (2) — UI polish start (web session, same branch, UI only)
 - She ran 0022 + 0023 (and 0024). Asked to start UI polish; no API change. Done in the UI repo: header genre links, account menu, footer links, 404 page, page titles, DRAFT legal pages (details in the UI STATE). Footer contact data is sample data.
 ### 2026-10-27 — Write a review (web session, branch `claude/focused-euler-oqo92a`, API + UI)
