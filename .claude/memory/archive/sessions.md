@@ -1,4 +1,7 @@
 # Archived sessions
+### 2026-11-02 (3) — Delete reviews from the admin (web session, branch `claude/focused-euler-oqo92a`, API + admin repos)
+- Her go-ahead: "start" (task 27). Did: script `0031_reviews_admin_search.sql` (`Reviews_Search`: paged, newest first, text / reviewer / book title search, rating filter, book title + account mobile); admin API `ReviewsController` (`SearchReviews`, `DeleteReview` using `Reviews_Delete` of 0024); admin UI `/reviews` (search, rating filter, table, delete behind the confirm dialog).
+- Verified: `dotnet build` 0 warnings, `npm run build` ok, Playwright with a mocked API (list, rating filter query, dialog text, cancel = no call, confirm = one delete call). NOT verified: 0031 never run.
 ### 2026-11-02 (2) — Reports in the admin (web session, branch `claude/focused-euler-oqo92a`, API + admin repos)
 - Her go-ahead: "start" (task 32). Did: script `0030_reports.sql` (`Reports_Sales`: summary + sales per day + 10 best-selling books of a period; `Reports_LowStock`); admin API `ReportsController` (`GetSalesReport`, `GetLowStockBooks`), `ReportsRepository`, report models; `ConvertJalaliDayToUtc` moved into the admin `BaseController`; admin UI `/reports` (period buttons + Jalali pickers, 7 KPI cards, bar chart, top books, low-stock list).
 - Verified: `dotnet build` 0 warnings, `npm run build` ok, Playwright with a mocked API (KPIs, 30 bars with 8 labels, "from the start of the year" = monthly bars, screenshot checked). NOT verified: 0030 never run (no SQL Server here).
