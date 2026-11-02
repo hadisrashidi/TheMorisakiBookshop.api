@@ -1,4 +1,7 @@
 # Archived sessions
+### 2026-11-04 (3) — Orders export to Excel (web session, branch `claude/focused-euler-oqo92a`, API + admin UI repos)
+- She ran 0036 and said "start the next one"; Claude chose the CSV export (open idea of tasks 32/33). Did (admin UI only, no SQL, no API change): "خروجی اکسل" button in the `/orders` toolbar; reads every page of the CURRENT search (50 per call, max 5000 orders) and downloads `orders.csv`; `features/admin/utils/csv-download.ts`.
+- Verified: `npm run build` ok, Playwright with a mocked API (120 orders = 3 calls, 121 lines, BOM, quotes doubled, formula text neutralised, mobile kept as text). NOT verified: opening the file in real Excel.
 ### 2026-11-04 (2) — Quick buttons in the admin orders list (web session, branch `claude/focused-euler-oqo92a`, API + admin repos)
 - She ran 0035 and asked for quick buttons in the orders list (cancel, copy tracking code). Did: script `0036_orders_search_tracking_code.sql` (`Orders_Search` redefined, same as 0026 + `TrackingCode` column in the page rows); admin API `OrderListItemOutputModel.TrackingCode`; admin UI list: "کپی رهگیری" (only with a code) and "لغو" (only where the flow allows Cancelled; confirm dialog, then reload).
 - Verified: `dotnet build` 0 warnings, `npm run build` ok, Playwright with a mocked API (button counts, clipboard text, cancel dialog = no call, confirm = one UpdateOrderStatus call, button gone after). NOT verified: 0036 never run.

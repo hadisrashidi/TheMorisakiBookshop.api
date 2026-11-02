@@ -26,7 +26,7 @@
 31. DONE 2026-10-31 with PLACEHOLDER data (script 0027, shop cart choice, `/shipping` page, admin page). Still open: her real methods, prices, free-above amount, cut-off time and delivery texts (see Questions for her); optional later: weight/city based prices, pickup address.
 32. DONE 2026-11-02 (script 0030): sales summary, chart per day / month, best-selling books, low stock. Report export to CSV DONE 2026-11-04 (days with sales + best-selling books). Comparison with the previous period DONE 2026-11-05. Sales by genre and author DONE 2026-11-05 (script 0038). Open ideas: sales by city, payment-date based revenue (needs the order history of script 0029 for old orders), customers report (task 33).
 33. DONE 2026-11-03: customers list + customer page, internal note on an order (script 0034). Order list row actions (cancel, copy tracking code) DONE 2026-11-04 (script 0036). Orders export to CSV/Excel DONE 2026-11-04 (admin UI only). Customers export DONE 2026-11-04. Customer note DONE 2026-11-05 (script 0037). Open: blocking a customer. (Invoice printing DONE 2026-11-03: admin only; open ideas: a customer can print / download her invoice in the shop, one invoice for several orders, a shipping label with the address and a barcode, an invoice number separate from the order number, tax / VAT lines if she needs them.)
-34. Shop extras to consider: (discount codes DONE 2026-11-03, script 0032; open ideas: auto-apply links `?code=`, codes for first order only, show discounts in the reports), best sellers block DONE 2026-11-04 (script 0035), "notify me when available", gift wrap.
+34. Shop extras to consider: (discount codes DONE 2026-11-03, script 0032; open ideas: auto-apply link `/cart?code=` DONE 2026-11-06, codes for first order only, show discounts in the reports), best sellers block DONE 2026-11-04 (script 0035), "notify me when available", gift wrap.
 35. Several payment methods (she wants more than one gateway: e.g. card-to-card with receipt check, cash on delivery) — belongs to task 18; not discussed until she raises it.
 
 ### Phase 3 — Cart, orders, stock
@@ -59,7 +59,7 @@
 - `Database/Migrations/0029_order_status_history.sql` — `OrderStatusHistory` table, `Orders_Place` / `Orders_SetStatus` redefined (history rows, `@OnlyIfStatus`), new `Orders_CancelMine`, `Orders_GetByUserId` / `Orders_GetById` redefined (history result set). Run after 0028. The shop API + admin API of this session need it (their order readers expect the extra result set).
 - `Database/Migrations/0028_books_search_author_and_admin_filters.sql` — `Books_Search` redefined (search text also matches the author name, `@StockStatus`, `@Visibility`, two more sorts). Run after 0027. Old calls (shop UI) keep working.
 - `Database/Migrations/0027_shipping_methods.sql` — table `ShippingMethods` (3 placeholder rows), `Orders.ShippingMethodName`, shipping procedures, new `Orders_Place` (NEEDS the UI of this session: it requires a shipping method), `Orders_GetByUserId` / `Orders_GetById` redefined. Run after 0026 (needs 0016 + 0017). Deploy the shop API + UI together with it.
-- (none) She ran 0010-0037 (2026-11-05). To run: 0038 (above).
+- (none) She ran 0010-0038 (2026-11-06). Nothing to run now.
 - `Database/Migrations/0026_orders_search_filters.sql` — `Orders_Search` redefined (date range, total range, sort, third result set with orders per status). Run after 0019. Needed by the admin API `Orders/SearchOrders` (old calls still work).
 
 ## For the UI repo
