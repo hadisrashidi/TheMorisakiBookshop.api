@@ -39,6 +39,7 @@ namespace TheMorisakiBookshop.Repositories
                 parameters.Add("@ShippingMethodId", request.ShippingMethodId);
                 parameters.Add("@City", request.City.Trim());
                 parameters.Add("@Lines", linesJson);
+                parameters.Add("@DiscountCode", request.DiscountCode.Trim());
 
                 CommandDefinition command = new CommandDefinition(
                     "dbo.Orders_Place",

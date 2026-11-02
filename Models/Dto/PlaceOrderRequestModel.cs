@@ -27,6 +27,10 @@ namespace TheMorisakiBookshop.Models.Dto
         [Range(1, int.MaxValue, ErrorMessage = "روش ارسال را انتخاب کنید.")]
         public int ShippingMethodId { get; set; }
 
+        // Optional discount code; checked again by the database when the order is placed.
+        [MaxLength(50, ErrorMessage = "کد تخفیف خیلی طولانی است.")]
+        public string DiscountCode { get; set; } = "";
+
         [Required(ErrorMessage = "سبد خرید خالی است.")]
         [MinLength(1, ErrorMessage = "سبد خرید خالی است.")]
         [MaxLength(50, ErrorMessage = "تعداد ردیف‌های سفارش زیاد است.")]

@@ -101,6 +101,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
                 return "یکی از کتاب‌های سبد دیگر موجود نیست. سبد را بررسی کنید.";
             }
 
+            if (placed.Problem == "DiscountInvalid")
+            {
+                // The reason of the discount check travels in ProblemTitle.
+                return GetDiscountMessage(placed.ProblemTitle);
+            }
+
             if (placed.Problem == "ShippingMethodInvalid")
             {
                 return "روش ارسال انتخاب‌شده برای این شهر در دسترس نیست. روش دیگری انتخاب کنید.";
