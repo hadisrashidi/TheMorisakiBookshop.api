@@ -19,5 +19,8 @@ namespace TheMorisakiBookshop.Models
         public string TrackingCode { get; set; } = "";
         public DateTime CreatedAt { get; set; }
         public List<OrderLineOutputModel> Lines { get; set; } = new List<OrderLineOutputModel>();
+
+        // When the order got each status, oldest first (the tracking timeline).
+        public List<OrderStatusHistoryOutputModel> History { get; set; } = new List<OrderStatusHistoryOutputModel>();
     }
 }
