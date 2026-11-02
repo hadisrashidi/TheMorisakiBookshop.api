@@ -1,4 +1,7 @@
 # Archived sessions
+### 2026-11-04 (2) — Quick buttons in the admin orders list (web session, branch `claude/focused-euler-oqo92a`, API + admin repos)
+- She ran 0035 and asked for quick buttons in the orders list (cancel, copy tracking code). Did: script `0036_orders_search_tracking_code.sql` (`Orders_Search` redefined, same as 0026 + `TrackingCode` column in the page rows); admin API `OrderListItemOutputModel.TrackingCode`; admin UI list: "کپی رهگیری" (only with a code) and "لغو" (only where the flow allows Cancelled; confirm dialog, then reload).
+- Verified: `dotnet build` 0 warnings, `npm run build` ok, Playwright with a mocked API (button counts, clipboard text, cancel dialog = no call, confirm = one UpdateOrderStatus call, button gone after). NOT verified: 0036 never run.
 ### 2026-11-04 — Best sellers on the home page (web session, branch `claude/focused-euler-oqo92a`, API + UI repos)
 - She ran 0034 and said "start the home page". Did: script `0035_books_best_sellers.sql` (`Books_GetBestSellers @Count`: shown books by copies sold in Paid / Packed / Shipped / Delivered orders, all time, never-sold books left out); shop API `Books/GetBestSellers` (8 books), `BooksRepository.GetBestSellersAsync`; shop UI home: block "پرفروش‌ترین‌ها" between the featured grid and the newest row (hidden when empty).
 - Verified: `dotnet build` 0 warnings, `npm run build` ok, Playwright with a mocked API (block shown with 2 cards; empty list = block hidden). NOT verified: 0035 never run.
