@@ -1,4 +1,7 @@
 # Archived sessions
+### 2026-11-04 (4) — Excel export for reports and customers (web session, branch `claude/focused-euler-oqo92a`, API + admin UI repos)
+- She ran 0036 and said "start the next one" (nothing new to run). Did (admin UI only, no SQL, no API change): "خروجی اکسل" on `/customers` (current search + sort, all pages, max 5000 -> `customers.csv`), on `/reports` for the days with sales (`sales-<from>-<to>.csv`) and for the best-selling books (`top-books.csv`); same `utils/csv-download.ts`.
+- Verified: `npm run build` ok, Playwright with a mocked API (75 customers = 2 calls, 76 lines; report files with Jalali days; quotes doubled). NOT verified: real Excel.
 ### 2026-11-04 (3) — Orders export to Excel (web session, branch `claude/focused-euler-oqo92a`, API + admin UI repos)
 - She ran 0036 and said "start the next one"; Claude chose the CSV export (open idea of tasks 32/33). Did (admin UI only, no SQL, no API change): "خروجی اکسل" button in the `/orders` toolbar; reads every page of the CURRENT search (50 per call, max 5000 orders) and downloads `orders.csv`; `features/admin/utils/csv-download.ts`.
 - Verified: `npm run build` ok, Playwright with a mocked API (120 orders = 3 calls, 121 lines, BOM, quotes doubled, formula text neutralised, mobile kept as text). NOT verified: opening the file in real Excel.

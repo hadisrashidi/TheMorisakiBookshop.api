@@ -10,6 +10,8 @@ namespace TheMorisakiBookshop.Controllers.Shop
 {
     public class AuthController : BaseController
     {
+        private const string BlockedMessage = "حساب شما غیرفعال شده است. برای پیگیری با پشتیبانی فروشگاه تماس بگیرید.";
+
         private readonly UsersRepository _usersRepository;
         private readonly OtpCodesRepository _otpCodesRepository;
         private readonly OtpService _otpService;
@@ -80,6 +82,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             UserModel user = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
+
+            if (user.IsBlocked)
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = BlockedMessage });
+            }
+
             AuthTokenOutputModel token = _jwtTokenService.CreateToken(user, request.RememberMe);
 
             return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = true, Data = token });
@@ -107,6 +115,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
             }
 
             UserModel user = await _usersRepository.GetOrCreateByMobileAsync(request.Mobile, cancellationToken);
+
+            if (user.IsBlocked)
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = BlockedMessage });
+            }
+
             string passwordHash = _passwordService.Hash(request.Password);
 
             string credentialsStatus = await _usersRepository.SetCredentialsAsync(user.Id, request.Email, passwordHash, cancellationToken);
@@ -159,6 +173,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
             if (user.FailedLoginCount > 0)
             {
                 await _usersRepository.ClearFailedLoginsAsync(user.Id, cancellationToken);
+            }
+
+            // Said only after the right password, so the message does not tell strangers which emails are blocked.
+            if (user.IsBlocked)
+            {
+                return Ok(new CustomActionResult<AuthTokenOutputModel> { IsSuccess = false, Message = BlockedMessage });
             }
 
             AuthTokenOutputModel token = _jwtTokenService.CreateToken(user, request.RememberMe);
