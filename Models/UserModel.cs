@@ -10,6 +10,7 @@ namespace TheMorisakiBookshop.Models
         public string? Name { get; set; }
         public string? Birthdate { get; set; }
         public string Role { get; set; } = "";
+        public bool IsBlocked { get; set; }
         public int FailedLoginCount { get; set; }
         public int LockedMinutesLeft { get; set; }
     }

@@ -39,6 +39,7 @@ namespace TheMorisakiBookshop.Repositories
                 parameters.Add("@ShippingMethodId", request.ShippingMethodId);
                 parameters.Add("@City", request.City.Trim());
                 parameters.Add("@Lines", linesJson);
+                parameters.Add("@DiscountCode", request.DiscountCode.Trim());
 
                 CommandDefinition command = new CommandDefinition(
                     "dbo.Orders_Place",
@@ -52,7 +53,7 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
-        // Result set 1 = the orders, result set 2 = all their lines; each line is put on its order.
+        // Result set 1 = the orders, 2 = all their lines, 3 = all their status history; each row is put on its order.
         public async Task<List<OrderOutputModel>> GetByUserIdAsync(int userId, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -85,8 +86,36 @@ namespace TheMorisakiBookshop.Repositories
                         ordersById[line.OrderId].Lines.Add(line);
                     }
 
+                    IEnumerable<OrderStatusHistoryOutputModel> history = await reader.ReadAsync<OrderStatusHistoryOutputModel>();
+
+                    foreach (OrderStatusHistoryOutputModel step in history)
+                    {
+                        ordersById[step.OrderId].History.Add(step);
+                    }
+
                     return orders;
                 }
+            }
+        }
+
+        // A customer cancels her own order (only while it is PendingPayment; the procedure checks both).
+        public async Task<OrderCancelResultModel> CancelMineAsync(int userId, int orderId, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                parameters.Add("@Id", orderId);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Orders_CancelMine",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                OrderCancelResultModel result = await connection.QuerySingleAsync<OrderCancelResultModel>(command);
+
+                return result;
             }
         }
     }

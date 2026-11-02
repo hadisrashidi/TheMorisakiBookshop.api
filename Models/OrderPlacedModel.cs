@@ -5,7 +5,7 @@ namespace TheMorisakiBookshop.Models
     {
         public int OrderId { get; set; }
 
-        // "" | EmptyOrder | BookNotFound | NotEnoughStock | ShippingMethodInvalid
+        // "" | EmptyOrder | BookNotFound | NotEnoughStock | ShippingMethodInvalid | DiscountInvalid (the reason is in ProblemTitle)
         public string Problem { get; set; } = "";
         public int ProblemBookId { get; set; }
         public string ProblemTitle { get; set; } = "";

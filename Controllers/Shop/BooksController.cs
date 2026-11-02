@@ -8,6 +8,7 @@ namespace TheMorisakiBookshop.Controllers.Shop
     {
         private const int NewBooksCount = 8;
         private const int FeaturedBooksCount = 4;
+        private const int BestSellersCount = 8;
         private const int RelatedBooksCount = 3;
         private const int SimilarBooksCount = 4;
 
@@ -34,6 +35,18 @@ namespace TheMorisakiBookshop.Controllers.Shop
         public async Task<IActionResult> GetNewBooks(CancellationToken cancellationToken)
         {
             List<BookOutputModel> books = await _booksRepository.GetNewestAsync(NewBooksCount, cancellationToken);
+
+            return Ok(new CustomActionResult<List<BookOutputModel>>
+            {
+                IsSuccess = true,
+                Data = books
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBestSellers(CancellationToken cancellationToken)
+        {
+            List<BookOutputModel> books = await _booksRepository.GetBestSellersAsync(BestSellersCount, cancellationToken);
 
             return Ok(new CustomActionResult<List<BookOutputModel>>
             {

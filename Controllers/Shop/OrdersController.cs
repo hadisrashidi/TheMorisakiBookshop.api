@@ -55,6 +55,33 @@ namespace TheMorisakiBookshop.Controllers.Shop
             });
         }
 
+        // The customer cancels her own order while it still waits for payment; the books go back to the stock.
+        [HttpPost]
+        public async Task<IActionResult> CancelMyOrder(int id, CancellationToken cancellationToken)
+        {
+            int userId = GetCurrentUserId();
+
+            OrderCancelResultModel cancelled = await _ordersRepository.CancelMineAsync(userId, id, cancellationToken);
+
+            CustomActionResult result = new CustomActionResult();
+            result.IsSuccess = cancelled.Result == "Ok";
+
+            if (cancelled.Result == "NotFound")
+            {
+                result.Message = "این سفارش پیدا نشد.";
+            }
+            else if (cancelled.Result == "InvalidTransition")
+            {
+                result.Message = "این سفارش دیگر قابل لغو نیست. برای لغو با فروشگاه تماس بگیرید.";
+            }
+            else
+            {
+                result.Message = "سفارش لغو شد.";
+            }
+
+            return Ok(result);
+        }
+
         private int GetCurrentUserId()
         {
             string idText = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0";
@@ -72,6 +99,12 @@ namespace TheMorisakiBookshop.Controllers.Shop
             if (placed.Problem == "BookNotFound")
             {
                 return "یکی از کتاب‌های سبد دیگر موجود نیست. سبد را بررسی کنید.";
+            }
+
+            if (placed.Problem == "DiscountInvalid")
+            {
+                // The reason of the discount check travels in ProblemTitle.
+                return GetDiscountMessage(placed.ProblemTitle);
             }
 
             if (placed.Problem == "ShippingMethodInvalid")

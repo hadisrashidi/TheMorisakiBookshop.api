@@ -9,6 +9,10 @@ namespace TheMorisakiBookshop.Models
         public decimal Subtotal { get; set; }
         public decimal ShippingCost { get; set; }
 
+        // Discount code used on this order (empty = none) and the toman it took off the books.
+        public string DiscountCode { get; set; } = "";
+        public decimal DiscountAmount { get; set; }
+
         // Name of the shipping method at order time (empty for orders placed before shipping methods existed).
         public string ShippingMethodName { get; set; } = "";
         public decimal Total { get; set; }
@@ -19,5 +23,8 @@ namespace TheMorisakiBookshop.Models
         public string TrackingCode { get; set; } = "";
         public DateTime CreatedAt { get; set; }
         public List<OrderLineOutputModel> Lines { get; set; } = new List<OrderLineOutputModel>();
+
+        // When the order got each status, oldest first (the tracking timeline).
+        public List<OrderStatusHistoryOutputModel> History { get; set; } = new List<OrderStatusHistoryOutputModel>();
     }
 }

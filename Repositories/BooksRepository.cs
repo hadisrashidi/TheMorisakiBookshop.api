@@ -89,6 +89,28 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        public async Task<List<BookOutputModel>> GetBestSellersAsync(int count, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Count", count);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Books_GetBestSellers",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                IEnumerable<BookOutputModel> rows = await connection.QueryAsync<BookOutputModel>(command);
+                List<BookOutputModel> books = rows.ToList();
+
+                await AddSpecsAsync(books, cancellationToken);
+
+                return books;
+            }
+        }
+
         public async Task<List<BookOutputModel>> GetFeaturedAsync(int count, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))

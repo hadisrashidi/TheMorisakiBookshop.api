@@ -59,6 +59,26 @@ namespace TheMorisakiBookshop.Repositories
             }
         }
 
+        // True when an admin blocked this account (checked on every request that carries a login token).
+        public async Task<bool> IsBlockedAsync(int id, CancellationToken cancellationToken)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+
+                CommandDefinition command = new CommandDefinition(
+                    "dbo.Users_IsBlocked",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    cancellationToken: cancellationToken);
+
+                bool isBlocked = await connection.ExecuteScalarAsync<bool>(command);
+
+                return isBlocked;
+            }
+        }
+
         public async Task<UserModel?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))

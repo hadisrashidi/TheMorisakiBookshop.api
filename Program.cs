@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,8 @@ namespace TheMorisakiBookshop
             builder.Services.AddScoped<AuthorsRepository>();
             builder.Services.AddScoped<ReviewsRepository>();
             builder.Services.AddScoped<ShippingMethodsRepository>();
+            builder.Services.AddScoped<DiscountCodesRepository>();
+            builder.Services.AddScoped<ShopSettingsRepository>();
             builder.Services.AddScoped<UsersRepository>();
             builder.Services.AddScoped<OrdersRepository>();
             builder.Services.AddScoped<AddressesRepository>();
@@ -111,6 +114,32 @@ namespace TheMorisakiBookshop
                     // 401 / 403 use the same envelope as every other response.
                     options.Events = new JwtBearerEvents
                     {
+                        // A valid token of a blocked account is refused at once (otherwise a 30-day "remember me"
+                        // token would keep working). One small query per request that carries a token.
+                        OnTokenValidated = async context =>
+                        {
+                            if (context.Principal == null)
+                            {
+                                return;
+                            }
+
+                            string idText = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+                            int userId = 0;
+                            bool hasId = int.TryParse(idText, out userId);
+
+                            if (hasId == false)
+                            {
+                                return;
+                            }
+
+                            UsersRepository usersRepository = context.HttpContext.RequestServices.GetRequiredService<UsersRepository>();
+                            bool isBlocked = await usersRepository.IsBlockedAsync(userId, context.HttpContext.RequestAborted);
+
+                            if (isBlocked)
+                            {
+                                context.Fail("Account blocked.");
+                            }
+                        },
                         OnChallenge = async context =>
                         {
                             context.HandleResponse();
