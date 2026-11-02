@@ -24,7 +24,7 @@
 29. DONE 2026-11-01: books filters (stock tabs, author, genre + language multi-select, visibility, price range, sort) + author-name search (script 0028), authors genre filter. Not done: author filter `has books`, counts on the stock tabs.
 30. DONE 2026-11-02 (script 0029): status timeline, tracking code + copy + post-site link, customer cancel while PendingPayment. Open: check the post tracking URL (is `?id=` accepted so the code can be pre-filled?), links for other carriers (chapar) when she picks them, SMS on status change (needs task 11).
 31. DONE 2026-10-31 with PLACEHOLDER data (script 0027, shop cart choice, `/shipping` page, admin page). Still open: her real methods, prices, free-above amount, cut-off time and delivery texts (see Questions for her); optional later: weight/city based prices, pickup address.
-32. Reports in the admin (dashboard): sales per day/month, revenue, orders per status, best-selling books, low stock list, new customers; export to Excel/CSV later.
+32. DONE 2026-11-02 (script 0030): sales summary, chart per day / month, best-selling books, low stock. Open ideas: export to Excel/CSV, comparison with the previous period, sales by genre / author / city, payment-date based revenue (needs the order history of script 0029 for old orders), customers report (task 33).
 33. Admin: customers list (orders per customer), review moderation list (BACKLOG 27), order list row actions (cancel, copy tracking code), print of the order / invoice, internal note on an order.
 34. Shop extras to consider: discount codes, best sellers / new arrivals blocks on the home page, "notify me when available", gift wrap.
 35. Several payment methods (she wants more than one gateway: e.g. card-to-card with receipt check, cash on delivery) — belongs to task 18; not discussed until she raises it.
@@ -47,10 +47,11 @@
 26. Business items (not code, she owns them; the draft legal pages and FAQ currently say: returns within 7 days, shipping in 2-5 working days — placeholders): return/refund policy, packaging standard for books, delivery-time promise, enamad/trust symbol, who handles customer support.
 
 ## SQL to run
+- `Database/Migrations/0030_reports.sql` — `Reports_Sales`, `Reports_LowStock` (new procedures only). Run after 0029 (needs 0016). Needed by the admin API `Reports/*`.
 - `Database/Migrations/0029_order_status_history.sql` — `OrderStatusHistory` table, `Orders_Place` / `Orders_SetStatus` redefined (history rows, `@OnlyIfStatus`), new `Orders_CancelMine`, `Orders_GetByUserId` / `Orders_GetById` redefined (history result set). Run after 0028. The shop API + admin API of this session need it (their order readers expect the extra result set).
 - `Database/Migrations/0028_books_search_author_and_admin_filters.sql` — `Books_Search` redefined (search text also matches the author name, `@StockStatus`, `@Visibility`, two more sorts). Run after 0027. Old calls (shop UI) keep working.
 - `Database/Migrations/0027_shipping_methods.sql` — table `ShippingMethods` (3 placeholder rows), `Orders.ShippingMethodName`, shipping procedures, new `Orders_Place` (NEEDS the UI of this session: it requires a shipping method), `Orders_GetByUserId` / `Orders_GetById` redefined. Run after 0026 (needs 0016 + 0017). Deploy the shop API + UI together with it.
-- (none) She ran 0010-0028 (0026-0028 on 2026-11-02, OK; she tests the sites later and reports problems). To run: 0029 (below).
+- (none) She ran 0010-0028 (0026-0028 on 2026-11-02, OK; she tests the sites later and reports problems). To run: 0029 + 0030 (below).
 - `Database/Migrations/0026_orders_search_filters.sql` — `Orders_Search` redefined (date range, total range, sort, third result set with orders per status). Run after 0019. Needed by the admin API `Orders/SearchOrders` (old calls still work).
 
 ## For the UI repo
